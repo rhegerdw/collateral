@@ -2,7 +2,7 @@
 
 export type Industry = 'healthcare' | 'financial' | 'enterprise' | 'smb';
 export type Persona = 'ciso' | 'cti' | 'soc' | 'vendor-risk';
-export type OutputType = 'email' | 'one-pager' | 'case-study' | 'datasheet';
+export type OutputType = 'email' | 'one-pager' | 'case-study' | 'datasheet' | 'report';
 export type EmailTemplate = 'post-meeting' | 'cold-outreach' | 'threat-update' | 'event-follow-up';
 
 export interface MeetingContext {

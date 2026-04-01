@@ -20,6 +20,7 @@ const PERSONAS: { value: Persona; label: string }[] = [
 ];
 
 const OUTPUT_TYPES: { value: OutputType; label: string; description: string }[] = [
+  { value: 'report', label: 'Report', description: 'Polished intelligence report' },
   { value: 'case-study', label: 'Case Study', description: 'Rich narrative with full detail' },
   { value: 'one-pager', label: 'One-Pager', description: 'Scannable overview' },
   { value: 'datasheet', label: 'Datasheet', description: 'Technical reference document' },

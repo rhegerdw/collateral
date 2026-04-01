@@ -176,12 +176,54 @@ RULES:
 - stats: 1-2 most relevant metrics.
 - Do NOT invent facts.`;
 
+const REPORT_PROMPT = `Take this raw intelligence content and produce a polished, publication-ready threat intelligence report. This is NOT marketing collateral — it is an analytical report for security professionals. Preserve the analytical rigor, sourcing language, and assessment confidence levels from the source material.
+
+Target persona: {persona}
+Target industry: {industry}
+Prepared for: {company}
+
+Raw content:
+"""
+{content}
+"""
+
+Return JSON:
+
+{
+  "headline": "Report title — clear, descriptive, no clickbait (e.g. 'Q1 2026 Threat Landscape Report')",
+  "subheadline": "One-line scope statement (e.g. 'Quarterly intelligence summary covering IAB ecosystem developments, emerging platforms, and offensive tooling trends')",
+  "sections": [
+    {
+      "heading": "Section title",
+      "body": "Full analytical paragraphs. Preserve ALL sourcing details, timelines, actor names, technical specifications, assessment language, and operational context. Multiple paragraphs separated by \\n\\n."
+    }
+  ],
+  "stats": [
+    { "number": "28%", "label": "Short metric label" }
+  ],
+  "cta": "Next step or point of contact"
+}
+
+CRITICAL RULES:
+- This is an INTELLIGENCE REPORT, not a sales document. Write in analytical prose — no marketing language, no hype, no calls-to-action within the body.
+- Preserve DWIQ assessment language ("DWIQ assesses...", "assessed ties to...", "consistent with..."). Do not soften or marketize analytical judgments.
+- Preserve ALL specifics: actor names, forum names, CVEs, prices, dates, technical specs, protocol lists, tool names, payment figures, victim counts.
+- Preserve sourcing and collection details — how DWIQ obtained the information (direct engagement, undercover operatives, forum monitoring). This is what makes the report credible.
+- Structure sections to follow the natural analytical flow of the source. Each major topic should be its own section. Use subsections within body text via bold markers where appropriate.
+- If the source contains defensive recommendations, keep them as a distinct section.
+- If the source references DWIQ's prior reporting, preserve those references.
+- stats array: pull the 3-5 most significant quantifiable data points from the source.
+- Do NOT invent facts, statistics, or assessments. Only use what is in the source material.
+- Do NOT anonymize — this is a report, not a case study. Keep all names as-is.
+- Clean up prose for clarity and flow, but NEVER cut substantive detail.`;
+
 // Prompt registry keyed by output type
 export const PROMPTS: Record<OutputType, { userPrompt: string; maxTokens: number }> = {
   'case-study': { userPrompt: CASE_STUDY_PROMPT, maxTokens: 4000 },
   'one-pager': { userPrompt: ONE_PAGER_PROMPT, maxTokens: 2000 },
   'datasheet': { userPrompt: DATASHEET_PROMPT, maxTokens: 3000 },
   'email': { userPrompt: EMAIL_PROMPT, maxTokens: 1500 },
+  'report': { userPrompt: REPORT_PROMPT, maxTokens: 8000 },
 };
 
 export const ENHANCE_SYSTEM_PROMPT = SYSTEM_PROMPT;
