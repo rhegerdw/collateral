@@ -1,132 +1,214 @@
 'use client';
 
-import { useState } from 'react';
-import {
-  generateCollateral,
-  onePagerToMarkdown,
-  formatEmailForDisplay,
-  GenerationResult,
-  Industry,
-  Persona,
-  OutputType,
-  EmailTemplate,
-} from '@/lib/collateral';
+import { useState, useRef } from 'react';
+import { EnhancedOnePager, BrandViolation, Industry, Persona, OutputType } from '@/lib/collateral/types';
+import { extractFileToMarkdown, ACCEPTED_FILE_TYPES, isSupportedFile, ExtractedSource, mergeExtractedSources } from '@/lib/file-extract';
+import EditablePreview from '@/components/EditablePreview';
 
-const INDUSTRIES: { value: Industry | ''; label: string }[] = [
-  { value: '', label: 'Auto-detect from notes' },
+const INDUSTRIES: { value: Industry; label: string }[] = [
   { value: 'healthcare', label: 'Healthcare' },
   { value: 'financial', label: 'Financial Services' },
   { value: 'enterprise', label: 'Enterprise' },
   { value: 'smb', label: 'SMB' },
 ];
 
-const PERSONAS: { value: Persona | ''; label: string }[] = [
-  { value: '', label: 'Auto-detect from notes' },
+const PERSONAS: { value: Persona; label: string }[] = [
   { value: 'ciso', label: 'CISO / Security Executive' },
   { value: 'cti', label: 'Threat Intelligence' },
   { value: 'soc', label: 'Security Operations' },
   { value: 'vendor-risk', label: 'Vendor Risk / TPRM' },
 ];
 
-const OUTPUT_TYPES: { value: OutputType; label: string }[] = [
-  { value: 'email', label: 'Follow-up Email' },
-  { value: 'one-pager', label: 'One-Pager' },
-];
-
-const EMAIL_TYPES: { value: EmailTemplate; label: string }[] = [
-  { value: 'post-meeting', label: 'Post-Meeting Follow-up' },
-  { value: 'cold-outreach', label: 'Cold Outreach' },
-  { value: 'threat-update', label: 'Industry Threat Update' },
-  { value: 'event-follow-up', label: 'Event Follow-up' },
+const OUTPUT_TYPES: { value: OutputType; label: string; description: string }[] = [
+  { value: 'case-study', label: 'Case Study', description: 'Rich narrative with full detail' },
+  { value: 'one-pager', label: 'One-Pager', description: 'Scannable overview' },
+  { value: 'datasheet', label: 'Datasheet', description: 'Technical reference document' },
+  { value: 'email', label: 'Email', description: 'Concise outreach email' },
 ];
 
 export default function GeneratePage() {
+  // Input state
   const [company, setCompany] = useState('');
-  const [notes, setNotes] = useState('');
-  const [outputType, setOutputType] = useState<OutputType>('email');
-  const [emailTemplate, setEmailTemplate] = useState<EmailTemplate>('post-meeting');
+  const [outputType, setOutputType] = useState<OutputType>('case-study');
   const [industry, setIndustry] = useState<Industry | ''>('');
   const [persona, setPersona] = useState<Persona | ''>('');
-  const [apiKey, setApiKey] = useState('');
-  const [showApiKey, setShowApiKey] = useState(false);
+  const [pastedText, setPastedText] = useState('');
+  const [sources, setSources] = useState<ExtractedSource[]>([]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [extracting, setExtracting] = useState(false);
 
-  const [result, setResult] = useState<GenerationResult | null>(null);
+  // Output state
+  const [document, setDocument] = useState<EnhancedOnePager | null>(null);
+  const [violations, setViolations] = useState<BrandViolation[]>([]);
+  const [editHistory, setEditHistory] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
-  const [copied, setCopied] = useState(false);
+  const [editing, setEditing] = useState(false);
   const [error, setError] = useState('');
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    setExtracting(true);
+    setError('');
+
+    try {
+      const newSources: ExtractedSource[] = [];
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        if (!isSupportedFile(file.name)) {
+          setError(`Skipped ${file.name} — only .pptx, .pdf, .docx supported`);
+          continue;
+        }
+        const content = await extractFileToMarkdown(file);
+        newSources.push({ filename: file.name, content });
+      }
+      setSources((prev) => [...prev, ...newSources]);
+    } catch (err) {
+      setError('Failed to extract content from one or more files.');
+      console.error(err);
+    } finally {
+      setExtracting(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  };
+
+  const removeSource = (index: number) => {
+    setSources((prev) => prev.filter((_, i) => i !== index));
+  };
 
   const handleGenerate = async () => {
     if (!company.trim()) {
       setError('Company name is required');
       return;
     }
-    if (!notes.trim()) {
-      setError('Meeting notes are required');
+    if (!industry) {
+      setError('Please select an industry');
+      return;
+    }
+    if (!persona) {
+      setError('Please select a persona');
       return;
     }
 
+    // Build merged content from all sources
+    const allSources = [...sources];
+    if (pastedText.trim()) {
+      allSources.push({ filename: 'Pasted text', content: pastedText.trim() });
+    }
+
+    if (allSources.length === 0) {
+      setError('Please upload files or paste content');
+      return;
+    }
+
+    const mergedContent = mergeExtractedSources(allSources);
+
     setLoading(true);
     setError('');
-    setResult(null);
+    setDocument(null);
+    setViolations([]);
+    setEditHistory([]);
 
     try {
-      const res = await generateCollateral(
-        {
+      const res = await fetch('/api/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          content: mergedContent,
           company: company.trim(),
-          notes: notes.trim(),
-          outputType,
-          emailTemplate: outputType === 'email' ? emailTemplate : undefined,
-          industry: industry || undefined,
-          persona: persona || undefined,
-        },
-        apiKey || undefined
-      );
-      setResult(res);
+          industry,
+          persona,
+          format: outputType,
+        }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || 'Generation failed');
+      }
+
+      const data = await res.json();
+      setDocument(data.document);
+      setViolations(data.violations || []);
     } catch (err) {
-      setError('Generation failed. Please try again.');
+      setError(err instanceof Error ? err.message : 'Generation failed');
       console.error(err);
     } finally {
       setLoading(false);
     }
   };
 
-  const getOutputText = (): string => {
-    if (!result) return '';
-    if (result.type === 'email' && result.email) {
-      return formatEmailForDisplay(result.email);
+  const handleEdit = async (instruction: string, sectionIndex?: number | null) => {
+    if (!document) return;
+
+    setEditing(true);
+    setError('');
+
+    try {
+      const res = await fetch('/api/edit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          instruction,
+          currentDocument: document,
+          sectionIndex,
+        }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || 'Edit failed');
+      }
+
+      const data = await res.json();
+      setDocument(data.updatedDocument);
+      setViolations(data.violations || []);
+      setEditHistory((prev) => [...prev, instruction]);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Edit failed');
+      console.error(err);
+    } finally {
+      setEditing(false);
     }
-    if (result.type === 'one-pager' && result.onePager) {
-      return onePagerToMarkdown(result.onePager);
-    }
-    return '';
   };
 
-  const handleCopy = async () => {
-    const text = getOutputText();
-    await navigator.clipboard.writeText(text);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
+  const totalSources = sources.length + (pastedText.trim() ? 1 : 0);
 
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
       <header className="border-b-2 border-black">
-        <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <span className="text-xl font-bold tracking-tight">DARKWEBIQ</span>
-            <span className="text-xs font-bold tracking-[0.2em] text-gray-500 uppercase">Collateral Generator</span>
+            <span className="text-xs font-bold tracking-[0.2em] text-gray-500 uppercase">
+              Collateral Generator
+            </span>
           </div>
+          {document && (
+            <button
+              onClick={() => {
+                setDocument(null);
+                setViolations([]);
+                setEditHistory([]);
+              }}
+              className="text-xs font-bold tracking-[0.2em] uppercase text-gray-500 hover:text-[#ff4400]"
+            >
+              New Document
+            </button>
+          )}
         </div>
       </header>
 
-      <main className="max-w-6xl mx-auto px-6 py-12">
-        <div className="grid lg:grid-cols-2 gap-12">
-          {/* Input Panel */}
-          <div>
+      <main className="max-w-7xl mx-auto px-6 py-12">
+        {!document && !loading ? (
+          /* ── Input Form ── */
+          <div className="max-w-3xl mx-auto">
             <h1 className="text-3xl font-bold mb-2">Generate Collateral</h1>
             <p className="text-gray-600 mb-8">
-              Transform meeting notes into tailored emails and one-pagers using your existing content.
+              Upload source materials, set parameters, and generate branded collateral.
+              You can upload multiple files and paste text — everything gets synthesized.
             </p>
 
             <div className="space-y-6">
@@ -144,125 +226,131 @@ export default function GeneratePage() {
                 />
               </div>
 
-              {/* Output Type & Email Template */}
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-bold tracking-[0.2em] uppercase text-gray-600 mb-2">
-                    Output Type
-                  </label>
-                  <select
-                    value={outputType}
-                    onChange={(e) => setOutputType(e.target.value as OutputType)}
-                    className="w-full px-4 py-3 text-base border-2 border-black focus:outline-none focus:border-[#ff4400] bg-white"
-                  >
-                    {OUTPUT_TYPES.map((opt) => (
-                      <option key={opt.value} value={opt.value}>
-                        {opt.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                {outputType === 'email' && (
-                  <div>
-                    <label className="block text-xs font-bold tracking-[0.2em] uppercase text-gray-600 mb-2">
-                      Email Type
-                    </label>
-                    <select
-                      value={emailTemplate}
-                      onChange={(e) => setEmailTemplate(e.target.value as EmailTemplate)}
-                      className="w-full px-4 py-3 text-base border-2 border-black focus:outline-none focus:border-[#ff4400] bg-white"
+              {/* Output Type */}
+              <div>
+                <label className="block text-xs font-bold tracking-[0.2em] uppercase text-gray-600 mb-2">
+                  Output Format *
+                </label>
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+                  {OUTPUT_TYPES.map((opt) => (
+                    <button
+                      key={opt.value}
+                      type="button"
+                      onClick={() => setOutputType(opt.value)}
+                      className={`py-3 px-4 border-2 font-bold text-sm transition-colors text-left ${
+                        outputType === opt.value
+                          ? 'border-[#ff4400] bg-[#ff4400] text-white'
+                          : 'border-black text-gray-600 hover:text-black'
+                      }`}
                     >
-                      {EMAIL_TYPES.map((opt) => (
-                        <option key={opt.value} value={opt.value}>
-                          {opt.label}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                )}
+                      <div className="tracking-[0.1em] uppercase">{opt.label}</div>
+                      <div className="text-xs font-normal mt-1 opacity-75">{opt.description}</div>
+                    </button>
+                  ))}
+                </div>
               </div>
 
               {/* Industry & Persona */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-bold tracking-[0.2em] uppercase text-gray-600 mb-2">
-                    Industry
+                    Industry *
                   </label>
                   <select
                     value={industry}
                     onChange={(e) => setIndustry(e.target.value as Industry | '')}
                     className="w-full px-4 py-3 text-base border-2 border-black focus:outline-none focus:border-[#ff4400] bg-white"
                   >
+                    <option value="">Select industry</option>
                     {INDUSTRIES.map((opt) => (
-                      <option key={opt.value} value={opt.value}>
-                        {opt.label}
-                      </option>
+                      <option key={opt.value} value={opt.value}>{opt.label}</option>
                     ))}
                   </select>
                 </div>
-
                 <div>
                   <label className="block text-xs font-bold tracking-[0.2em] uppercase text-gray-600 mb-2">
-                    Persona
+                    Persona *
                   </label>
                   <select
                     value={persona}
                     onChange={(e) => setPersona(e.target.value as Persona | '')}
                     className="w-full px-4 py-3 text-base border-2 border-black focus:outline-none focus:border-[#ff4400] bg-white"
                   >
+                    <option value="">Select persona</option>
                     {PERSONAS.map((opt) => (
-                      <option key={opt.value} value={opt.value}>
-                        {opt.label}
-                      </option>
+                      <option key={opt.value} value={opt.value}>{opt.label}</option>
                     ))}
                   </select>
                 </div>
               </div>
 
-              {/* Meeting Notes */}
+              {/* Source Materials */}
               <div>
                 <label className="block text-xs font-bold tracking-[0.2em] uppercase text-gray-600 mb-2">
-                  Meeting Notes *
+                  Source Materials *
                 </label>
-                <textarea
-                  value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
-                  placeholder="Paste your meeting notes here...
 
-Example:
-Met with Sarah Chen (CISO) and James Park (Head of CTI) at Acme Financial.
-Discussed their concerns about ransomware targeting and vendor risk.
-They currently use Recorded Future but find it noisy.
-Interested in our access interception capability.
-Next step: Send them a one-pager and schedule a demo for next week."
-                  rows={10}
-                  className="w-full px-4 py-3 text-base border-2 border-black focus:outline-none focus:border-[#ff4400] resize-none"
+                {/* File upload */}
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  multiple
+                  accept={ACCEPTED_FILE_TYPES}
+                  onChange={handleFileUpload}
+                  className="hidden"
                 />
-              </div>
-
-              {/* API Key (optional) */}
-              <div>
                 <button
                   type="button"
-                  onClick={() => setShowApiKey(!showApiKey)}
-                  className="text-xs font-bold tracking-[0.2em] uppercase text-gray-500 hover:text-[#ff4400]"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={extracting}
+                  className="border-2 border-dashed border-gray-400 hover:border-black w-full py-6 px-4 text-sm text-gray-500 hover:text-black transition-colors disabled:opacity-50 mb-3"
                 >
-                  {showApiKey ? '▼' : '▶'} Advanced: API Key
+                  {extracting
+                    ? 'Extracting content...'
+                    : 'Drop or click to upload .pptx, .pdf, .docx files (multiple allowed)'}
                 </button>
-                {showApiKey && (
-                  <div className="mt-2">
-                    <input
-                      type="password"
-                      value={apiKey}
-                      onChange={(e) => setApiKey(e.target.value)}
-                      placeholder="Anthropic API key for auto-detection"
-                      className="w-full px-4 py-3 text-base border-2 border-gray-300 focus:outline-none focus:border-[#ff4400]"
-                    />
-                    <p className="text-xs text-gray-500 mt-1">
-                      Optional. Enables AI-powered context extraction from notes.
-                    </p>
+
+                {/* Uploaded sources list */}
+                {sources.length > 0 && (
+                  <div className="mb-3 space-y-2">
+                    {sources.map((source, i) => (
+                      <div
+                        key={i}
+                        className="flex items-center justify-between px-3 py-2 bg-gray-50 border border-gray-200"
+                      >
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-bold text-[#ff4400]">
+                            {source.filename.split('.').pop()?.toUpperCase()}
+                          </span>
+                          <span className="text-sm">{source.filename}</span>
+                          <span className="text-xs text-gray-400">
+                            ({Math.round(source.content.length / 1000)}k chars)
+                          </span>
+                        </div>
+                        <button
+                          onClick={() => removeSource(i)}
+                          className="text-gray-400 hover:text-red-600 text-sm font-bold"
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    ))}
                   </div>
+                )}
+
+                {/* Paste text */}
+                <textarea
+                  value={pastedText}
+                  onChange={(e) => setPastedText(e.target.value)}
+                  placeholder="Paste additional text here — meeting notes, raw copy, report excerpts, anything relevant..."
+                  rows={6}
+                  className="w-full px-4 py-3 text-base border-2 border-black focus:outline-none focus:border-[#ff4400] resize-none"
+                />
+
+                {totalSources > 0 && (
+                  <p className="text-xs text-gray-500 mt-1">
+                    {totalSources} source{totalSources !== 1 ? 's' : ''} — all will be synthesized into one document
+                  </p>
                 )}
               </div>
 
@@ -270,74 +358,39 @@ Next step: Send them a one-pager and schedule a demo for next week."
               <button
                 onClick={handleGenerate}
                 disabled={loading}
-                className="w-full bg-black text-white py-4 px-8 font-bold text-sm tracking-[0.2em] uppercase hover:bg-[#ff4400] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full bg-[#ff4400] hover:bg-black text-white py-4 px-8 font-bold text-sm tracking-[0.2em] uppercase transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? 'Generating...' : 'Generate'}
               </button>
 
-              {error && (
-                <p className="text-red-600 text-sm">{error}</p>
-              )}
+              {error && <p className="text-red-600 text-sm">{error}</p>}
             </div>
           </div>
-
-          {/* Output Panel */}
-          <div>
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold">Output</h2>
-              {result && (
-                <button
-                  onClick={handleCopy}
-                  className="bg-black text-white py-2 px-4 font-bold text-xs tracking-[0.2em] uppercase hover:bg-[#ff4400] transition-colors"
-                >
-                  {copied ? 'Copied!' : 'Copy'}
-                </button>
-              )}
-            </div>
-
-            <div className="border-2 border-black min-h-[500px] p-6 bg-gray-50">
-              {!result && !loading && (
-                <p className="text-gray-400 italic">
-                  Generated collateral will appear here...
-                </p>
-              )}
-
-              {loading && (
-                <div className="flex items-center justify-center h-full">
-                  <div className="animate-pulse text-gray-500">Generating...</div>
-                </div>
-              )}
-
-              {result && (
-                <div className="space-y-6">
-                  {/* Detected Context */}
-                  {result.context && (
-                    <div className="text-xs text-gray-500 border-b border-gray-200 pb-4">
-                      <span className="font-bold uppercase tracking-[0.2em]">Detected: </span>
-                      {result.context.industry && <span className="mr-3">Industry: {result.context.industry}</span>}
-                      {result.context.persona && <span className="mr-3">Persona: {result.context.persona}</span>}
-                      {result.context.attendees?.length ? (
-                        <span>Attendees: {result.context.attendees.join(', ')}</span>
-                      ) : null}
-                    </div>
-                  )}
-
-                  {/* Output Content */}
-                  <div className="whitespace-pre-wrap font-mono text-sm leading-relaxed">
-                    {getOutputText()}
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Token estimate */}
-            {result && (
-              <p className="text-xs text-gray-500 mt-2">
-                Estimated tokens used: ~{Math.ceil(notes.length / 4) + 200} (extraction) + 0 (template fill)
+        ) : loading ? (
+          /* ── Loading ── */
+          <div className="flex items-center justify-center min-h-[400px]">
+            <div className="text-center">
+              <div className="animate-pulse text-gray-500 text-lg mb-2">
+                Generating your {outputType.replace('-', ' ')}...
+              </div>
+              <p className="text-xs text-gray-400">
+                Synthesizing {totalSources} source{totalSources !== 1 ? 's' : ''} with brand rules applied
               </p>
-            )}
+            </div>
           </div>
-        </div>
+        ) : document ? (
+          /* ── Output with Editable Preview ── */
+          <div className="max-w-4xl mx-auto">
+            <EditablePreview
+              data={document}
+              onEdit={handleEdit}
+              editing={editing}
+              violations={violations}
+              editHistory={editHistory}
+            />
+            {error && <p className="text-red-600 text-sm mt-4">{error}</p>}
+          </div>
+        ) : null}
       </main>
     </div>
   );

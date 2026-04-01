@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DarkWebIQ - Resilience One-Pager</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      color: #111;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 40px;
+    }
+
+    /* Header */
+    header {
+      border-bottom: 4px solid #000;
+      padding-bottom: 24px;
+      margin-bottom: 32px;
+    }
+    header .brand {
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      color: #6b7280;
+      margin-bottom: 8px;
+    }
+    header h1 {
+      font-size: 36px;
+      font-weight: 900;
+      margin-bottom: 12px;
+    }
+    header .prepared {
+      font-size: 16px;
+      color: #6b7280;
+    }
+    header .prepared strong {
+      color: #111;
+    }
+
+    /* Sections */
+    section { margin-bottom: 32px; }
+    h2 {
+      font-size: 18px;
+      font-weight: 700;
+      color: #ff4400;
+      margin-bottom: 12px;
+    }
+    p { color: #374151; line-height: 1.625; }
+    ul {
+      list-style: none;
+      color: #374151;
+      line-height: 1.75;
+    }
+    ul li::before {
+      content: "\2022\00a0\00a0";
+    }
+
+    /* Capabilities */
+    h3 {
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .capabilities ul { font-size: 14px; }
+
+    /* Stats grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      text-align: center;
+    }
+    .stat-box {
+      background: #f3f4f6;
+      padding: 16px;
+    }
+    .stat-number {
+      font-size: 30px;
+      font-weight: 900;
+    }
+    .stat-label {
+      font-size: 14px;
+      color: #6b7280;
+    }
+
+    /* Case study */
+    .case-study-box {
+      border: 1px solid #e5e7eb;
+      padding: 16px;
+    }
+    .case-study-box .company {
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .case-study-box .outcome {
+      font-size: 14px;
+      color: #6b7280;
+    }
+
+    /* Testimonial */
+    .testimonial {
+      border-top: 2px solid #000;
+      padding-top: 24px;
+    }
+    blockquote {
+      color: #374151;
+      font-style: italic;
+      line-height: 1.625;
+      margin-bottom: 12px;
+    }
+    .attribution {
+      font-size: 14px;
+    }
+    .attribution .role {
+      color: #ff4400;
+    }
+
+    /* CTA */
+    .cta {
+      border-top: 2px solid #000;
+      padding-top: 24px;
+    }
+    .cta p {
+      font-size: 14px;
+      font-weight: 700;
+      color: #111;
+    }
+    .cta span {
+      font-weight: 400;
+      color: #374151;
+    }
+
+    /* Print */
+    @media print {
+      body { padding: 0; }
+      .no-print { display: none !important; }
+      @page { margin: 0.75in; size: letter; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="brand">DARKWEBIQ</div>
+    <h1>Ransomware Stopped Before It Starts</h1>
+    <p class="prepared">Prepared for <strong>Resilience</strong></p>
+  </header>
+
+  <section>
+    <h2>The Challenge</h2>
+    <ul>
+      <li>Healthcare networks face constant ransomware threats targeting patient data</li>
+      <li>Criminal access brokers sell your network credentials to tier-one ransomware groups</li>
+      <li>Traditional security can't stop attacks that use legitimate stolen credentials</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>The DarkWeb IQ Difference</h2>
+    <p>DarkWebIQ buys compromised network access from criminal marketplaces before attackers can use it. We stopped a major ransomware affiliate from encrypting AnewHealth's network and protected 135,000+ patient records.</p>
+  </section>
+
+  <section class="capabilities">
+    <h3>Key Capabilities</h3>
+    <ul>
+      <li>Intercept network access before ransomware groups can purchase it</li>
+      <li>Receive immediate threat intelligence when your organization is targeted</li>
+      <li>Deploy incident response teams to eject attackers and close access points</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Results</h2>
+    <div class="stats-grid">
+      <div class="stat-box">
+        <div class="stat-number">$249.6M</div>
+        <div class="stat-label">Revenue organization protected</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-number">135,000+</div>
+        <div class="stat-label">Patient records secured</div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Case Study: Major Access Broker Takedown</h2>
+    <div class="case-study-box">
+      <p class="company">Leading pharmacy care management company serving patients in all 50 states</p>
+      <p class="outcome">Attack completely aborted, encryption denied, and the prolific access supplier to Hive, AlphV, and Lockbit ransomware groups was arrested and indicted based on DarkWebIQ intelligence.</p>
+    </div>
+  </section>
+
+  <section class="cta">
+    <p>Next Step: <span>See how DarkWebIQ can protect your healthcare organization</span></p>
+  </section>
+
+  <div class="no-print" style="margin-top: 32px; padding-top: 32px; border-top: 1px solid #e5e7eb;">
+    <button onclick="window.print()" style="background: #000; color: #fff; padding: 12px 24px; font-weight: 700; font-size: 14px; letter-spacing: 0.2em; text-transform: uppercase; border: none; cursor: pointer;">
+      Save as PDF
+    </button>
+    <p style="font-size: 12px; color: #6b7280; margin-top: 8px;">
+      Tip: In the print dialog, uncheck "Headers and footers" for a clean PDF.
+    </p>
+  </div>
+
+</body>
+</html>

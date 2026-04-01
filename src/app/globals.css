@@ -1,3 +1,32 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@media print {
+  /* Hide everything except the one-pager */
+  body * {
+    visibility: hidden;
+  }
+  .one-pager-preview,
+  .one-pager-preview * {
+    visibility: visible;
+  }
+  .one-pager-preview {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    padding: 40px;
+  }
+
+  /* Hide UI elements */
+  .no-print {
+    display: none !important;
+  }
+
+  /* Clean page setup */
+  @page {
+    margin: 0.75in;
+    size: letter;
+  }
+}

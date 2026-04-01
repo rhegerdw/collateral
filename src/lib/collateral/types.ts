@@ -2,7 +2,7 @@
 
 export type Industry = 'healthcare' | 'financial' | 'enterprise' | 'smb';
 export type Persona = 'ciso' | 'cti' | 'soc' | 'vendor-risk';
-export type OutputType = 'email' | 'one-pager';
+export type OutputType = 'email' | 'one-pager' | 'case-study' | 'datasheet';
 export type EmailTemplate = 'post-meeting' | 'cold-outreach' | 'threat-update' | 'event-follow-up';
 
 export interface MeetingContext {
@@ -62,6 +62,23 @@ export interface GeneratedOnePager {
   };
 }
 
+// Rich section for enhanced collateral — preserves narrative detail
+export interface ContentSection {
+  heading: string;
+  body: string; // Markdown-ish: supports paragraphs, can be multi-line
+}
+
+// Enhanced one-pager with flexible narrative sections
+export interface EnhancedOnePager {
+  headline: string;
+  subheadline: string;
+  company: string;
+  industry: Industry;
+  sections: ContentSection[];
+  stats: Array<{ number: string; label: string }>;
+  cta: string;
+}
+
 export interface GenerationRequest {
   company: string;
   notes: string;
@@ -76,4 +93,33 @@ export interface GenerationResult {
   email?: GeneratedEmail;
   onePager?: GeneratedOnePager;
   context: MeetingContext;
+}
+
+// --- Enhance mode types ---
+
+export interface EnhanceRequest {
+  content: string;
+  company: string;
+  industry: Industry;
+  persona: Persona;
+  format: OutputType;
+}
+
+export interface EditRequest {
+  instruction: string;
+  currentDocument: EnhancedOnePager;
+  sectionIndex?: number | null; // null or undefined = whole-document edit
+}
+
+export interface EditResponse {
+  updatedDocument: EnhancedOnePager;
+  changeDescription: string;
+  violations: BrandViolation[];
+}
+
+export interface BrandViolation {
+  field: string;
+  original: string;
+  corrected: string;
+  rule: string;
 }
