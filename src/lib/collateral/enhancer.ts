@@ -195,7 +195,48 @@ Return JSON:
   "sections": [
     {
       "heading": "Section title",
-      "body": "Full analytical paragraphs. Preserve ALL sourcing details, timelines, actor names, technical specifications, assessment language, and operational context. Multiple paragraphs separated by \\n\\n."
+      "body": "Full analytical paragraphs. Preserve ALL sourcing details, timelines, actor names, technical specifications, assessment language, and operational context. Multiple paragraphs separated by \\n\\n. Use **bold** for subsection headers within body text."
+    }
+  ],
+  "charts": [
+    {
+      "type": "bar-chart",
+      "title": "Chart title",
+      "afterSection": 0,
+      "bars": [
+        { "label": "Row label", "value": 79, "displayValue": "79%", "style": "primary" }
+      ]
+    },
+    {
+      "type": "timeline",
+      "title": "Timeline title",
+      "afterSection": 1,
+      "items": [
+        { "date": "October 2025", "text": "Event description" },
+        { "date": "March 2026", "text": "Later event", "muted": true }
+      ]
+    },
+    {
+      "type": "comparison",
+      "title": "Comparison title",
+      "afterSection": 0,
+      "boxes": [
+        {
+          "title": "Box heading",
+          "items": [
+            { "number": "$1,427", "detail": "Description", "highlight": false },
+            { "number": "$439", "detail": "Description", "highlight": true }
+          ],
+          "footnote": "Optional explanatory text"
+        }
+      ]
+    },
+    {
+      "type": "pipeline",
+      "title": "Pipeline title",
+      "afterSection": 2,
+      "stages": [ { "label": "Stage 1" }, { "label": "Stage 2" } ],
+      "footnotes": [ { "number": "70/30", "detail": "Revenue split" } ]
     }
   ],
   "stats": [
@@ -209,13 +250,24 @@ CRITICAL RULES:
 - Preserve DWIQ assessment language ("DWIQ assesses...", "assessed ties to...", "consistent with..."). Do not soften or marketize analytical judgments.
 - Preserve ALL specifics: actor names, forum names, CVEs, prices, dates, technical specs, protocol lists, tool names, payment figures, victim counts.
 - Preserve sourcing and collection details — how DWIQ obtained the information (direct engagement, undercover operatives, forum monitoring). This is what makes the report credible.
-- Structure sections to follow the natural analytical flow of the source. Each major topic should be its own section. Use subsections within body text via bold markers where appropriate.
+- Structure sections to follow the natural analytical flow of the source. Each major topic should be its own section. Use subsections within body text via **bold** markers where appropriate.
 - If the source contains defensive recommendations, keep them as a distinct section.
 - If the source references DWIQ's prior reporting, preserve those references.
 - stats array: pull the 3-5 most significant quantifiable data points from the source.
 - Do NOT invent facts, statistics, or assessments. Only use what is in the source material.
 - Do NOT anonymize — this is a report, not a case study. Keep all names as-is.
-- Clean up prose for clarity and flow, but NEVER cut substantive detail.`;
+- Clean up prose for clarity and flow, but NEVER cut substantive detail.
+
+CHARTS:
+- Include 3-6 charts that visualize the most important data from the report.
+- "afterSection" is a 0-based index — the chart renders between that section and the next.
+- Chart types and when to use them:
+  - "bar-chart": For comparing quantities across categories (e.g. payment rates by year, protocol coverage, access type distribution). "value" is 0-100 for bar width percentage. "style" is "primary" (red/orange), "dark" (black), or "muted" (gray) — use to visually distinguish categories or show progression.
+  - "timeline": For chronological sequences of events (e.g. collection timelines, incident progressions). Set "muted": true for events from external/open sources to contrast with DWIQ-sourced events.
+  - "comparison": For side-by-side metric comparisons (e.g. price changes over time, before/after). Each box has a title and multiple number+detail items. Set "highlight": true on the key figure. Use "footnote" for brief explanatory context.
+  - "pipeline": For multi-stage processes or workflows (e.g. attack chains, processing pipelines). Use "footnotes" for key specs/parameters of the pipeline.
+- Place charts after the section whose content they illustrate — not clustered together.
+- Only visualize data that exists in the source material. Do NOT invent data for charts.`;
 
 // Prompt registry keyed by output type
 export const PROMPTS: Record<OutputType, { userPrompt: string; maxTokens: number }> = {

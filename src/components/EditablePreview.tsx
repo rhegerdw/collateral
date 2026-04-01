@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { EnhancedOnePager, BrandViolation } from '@/lib/collateral/types';
+import { EnhancedOnePager, BrandViolation, ReportChart } from '@/lib/collateral/types';
 
 interface EditablePreviewProps {
   data: EnhancedOnePager;
@@ -18,7 +18,101 @@ export default function EditablePreview({
   violations,
   editHistory,
 }: EditablePreviewProps) {
-  const { headline, subheadline, company, sections, stats, cta } = data;
+  const { headline, subheadline, company, sections, stats, charts, cta } = data;
+
+  // Build chart map: afterSection index -> charts
+  const chartMap: Record<number, ReportChart[]> = {};
+  if (charts?.length) {
+    for (const chart of charts) {
+      const idx = chart.afterSection;
+      if (!chartMap[idx]) chartMap[idx] = [];
+      chartMap[idx].push(chart);
+    }
+  }
+
+  const renderChart = (chart: ReportChart, key: string) => {
+    switch (chart.type) {
+      case 'bar-chart':
+        return (
+          <div key={key} className="my-6 bg-gray-50 border border-gray-200 p-5">
+            <div className="text-xs font-bold tracking-widest text-gray-500 uppercase mb-4">{chart.title}</div>
+            {chart.bars.map((bar, i) => (
+              <div key={i} className="flex items-center mb-2">
+                <div className="w-32 text-xs font-semibold text-gray-600 text-right pr-3 flex-shrink-0">{bar.label}</div>
+                <div className="flex-1 bg-gray-200 h-7 relative">
+                  <div
+                    className={`h-full flex items-center pl-2 text-xs font-bold text-white ${bar.style === 'primary' ? 'bg-[#ff4400]' : bar.style === 'dark' ? 'bg-black' : 'bg-gray-500'}`}
+                    style={{ width: `${bar.value}%`, minWidth: '36px' }}
+                  >
+                    {bar.displayValue}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        );
+      case 'timeline':
+        return (
+          <div key={key} className="my-6 bg-gray-50 border border-gray-200 p-5">
+            <div className="text-xs font-bold tracking-widest text-gray-500 uppercase mb-4">{chart.title}</div>
+            <div className="border-l-[3px] border-gray-200 pl-6 relative">
+              {chart.items.map((item, i) => (
+                <div key={i} className="relative mb-5 pl-5">
+                  <div className={`absolute -left-[33px] top-1 w-3 h-3 rounded-full border-[3px] border-white ${item.muted ? 'bg-gray-500 shadow-[0_0_0_2px_#6b7280]' : 'bg-[#ff4400] shadow-[0_0_0_2px_#ff4400]'}`} />
+                  <div className={`text-xs font-bold tracking-wide mb-0.5 ${item.muted ? 'text-gray-500' : 'text-[#ff4400]'}`}>{item.date}</div>
+                  <div className="text-sm text-gray-600 leading-snug">{item.text}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      case 'comparison':
+        return (
+          <div key={key} className="my-6 grid grid-cols-2 gap-4">
+            {chart.boxes.map((box, i) => (
+              <div key={i} className="bg-gray-50 border border-gray-200 p-5">
+                <div className="text-xs font-bold tracking-widest text-gray-500 uppercase mb-2">{box.title}</div>
+                {box.items.map((item, j) => (
+                  <div key={j} className={j > 0 ? 'mt-2' : ''}>
+                    <div className={`text-3xl font-black leading-tight ${item.highlight ? 'text-[#ff4400]' : 'text-gray-900'}`}>{item.number}</div>
+                    <div className="text-xs text-gray-500 mt-1">{item.detail}</div>
+                  </div>
+                ))}
+                {box.footnote && <div className="text-xs text-gray-600 mt-3 leading-snug">{box.footnote}</div>}
+              </div>
+            ))}
+          </div>
+        );
+      case 'pipeline':
+        return (
+          <div key={key} className="my-6 bg-gray-50 border border-gray-200 p-5">
+            <div className="text-xs font-bold tracking-widest text-gray-500 uppercase mb-4">{chart.title}</div>
+            <div className="flex">
+              {chart.stages.map((stage, i) => (
+                <div
+                  key={i}
+                  className="flex-1 py-3 px-2 text-center text-xs font-bold text-white"
+                  style={{ background: i === 0 ? '#ff4400' : i === 1 ? '#cc3700' : i === 2 ? '#992900' : '#111' }}
+                >
+                  <span className="text-[10px] opacity-70 block mb-0.5 tracking-widest">STAGE {i + 1}</span>
+                  {stage.label}
+                </div>
+              ))}
+            </div>
+            {chart.footnotes?.length ? (
+              <div className={`grid gap-3 mt-4`} style={{ gridTemplateColumns: `repeat(${chart.footnotes.length}, 1fr)` }}>
+                {chart.footnotes.map((fn, i) => (
+                  <div key={i} className="text-center p-3 bg-white border border-gray-200">
+                    <div className="text-sm font-bold text-gray-900">{fn.number}</div>
+                    <div className="text-[11px] text-gray-500 mt-0.5">{fn.detail}</div>
+                  </div>
+                ))}
+              </div>
+            ) : null}
+          </div>
+        );
+    }
+  };
   const [selectedSection, setSelectedSection] = useState<number | null>(null);
   const [instruction, setInstruction] = useState('');
 
@@ -61,33 +155,37 @@ export default function EditablePreview({
           )}
         </header>
 
-        {/* Narrative Sections — clickable */}
+        {/* Narrative Sections — clickable, with charts interleaved */}
         {sections.map((section, i) => (
-          <section
-            key={i}
-            className={`mb-8 p-3 -mx-3 cursor-pointer transition-colors border-l-4 ${
-              selectedSection === i
-                ? 'border-[#ff4400] bg-orange-50'
-                : 'border-transparent hover:border-gray-300 hover:bg-gray-50'
-            }`}
-            style={{ breakInside: 'avoid' }}
-            onClick={() => setSelectedSection(i)}
-          >
-            <h2 className="text-lg font-bold mb-3 text-[#ff4400]">
-              {section.heading}
-            </h2>
-            <div className="text-gray-700 leading-relaxed space-y-3">
-              {section.body.split('\n\n').map((paragraph, j) => (
-                <p key={j}>{paragraph}</p>
-              ))}
-            </div>
-            {selectedSection === i && (
-              <div className="mt-2 text-xs text-[#ff4400] font-bold tracking-wide">
-                EDITING THIS SECTION
+          <div key={i}>
+            <section
+              className={`mb-8 p-3 -mx-3 cursor-pointer transition-colors border-l-4 ${
+                selectedSection === i
+                  ? 'border-[#ff4400] bg-orange-50'
+                  : 'border-transparent hover:border-gray-300 hover:bg-gray-50'
+              }`}
+              style={{ breakInside: 'avoid' }}
+              onClick={() => setSelectedSection(i)}
+            >
+              <h2 className="text-lg font-bold mb-3 text-[#ff4400]">
+                {section.heading}
+              </h2>
+              <div className="text-gray-700 leading-relaxed space-y-3">
+                {section.body.split('\n\n').map((paragraph, j) => (
+                  <p key={j} dangerouslySetInnerHTML={{ __html: paragraph.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>') }} />
+                ))}
               </div>
-            )}
-          </section>
+              {selectedSection === i && (
+                <div className="mt-2 text-xs text-[#ff4400] font-bold tracking-wide">
+                  EDITING THIS SECTION
+                </div>
+              )}
+            </section>
+            {chartMap[i]?.map((chart, ci) => renderChart(chart, `chart-${i}-${ci}`))}
+          </div>
         ))}
+
+        {/* Charts after all sections (those not placed after a specific section) */}
 
         {/* Stats */}
         {stats.length > 0 && (

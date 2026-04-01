@@ -36,6 +36,7 @@ export async function POST(request: Request) {
       industry: body.industry as Industry,
       sections: (parsed.sections as EnhancedOnePager['sections']) || [],
       stats: (parsed.stats as EnhancedOnePager['stats']) || [],
+      charts: (parsed.charts as EnhancedOnePager['charts']) || undefined,
       cta: (parsed.cta as string) || '',
     };
 

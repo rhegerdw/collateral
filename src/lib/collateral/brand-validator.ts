@@ -131,6 +131,10 @@ export function validateAndFix(doc: EnhancedOnePager): {
       number: stat.number,
       label: applyRulesToText(stat.label, `stats[${i}].label`, violations),
     })),
+    charts: doc.charts?.map((chart, i) => ({
+      ...chart,
+      title: applyRulesToText(chart.title, `charts[${i}].title`, violations),
+    })),
     cta: applyRulesToText(doc.cta, 'cta', violations),
   };
 

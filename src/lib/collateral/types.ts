@@ -68,6 +68,42 @@ export interface ContentSection {
   body: string; // Markdown-ish: supports paragraphs, can be multi-line
 }
 
+// Chart types for report visualizations
+export interface BarChart {
+  type: 'bar-chart';
+  title: string;
+  afterSection: number;
+  bars: Array<{ label: string; value: number; displayValue: string; style: 'primary' | 'dark' | 'muted' }>;
+}
+
+export interface TimelineChart {
+  type: 'timeline';
+  title: string;
+  afterSection: number;
+  items: Array<{ date: string; text: string; muted?: boolean }>;
+}
+
+export interface ComparisonChart {
+  type: 'comparison';
+  title: string;
+  afterSection: number;
+  boxes: Array<{
+    title: string;
+    items: Array<{ number: string; detail: string; highlight?: boolean }>;
+    footnote?: string;
+  }>;
+}
+
+export interface PipelineChart {
+  type: 'pipeline';
+  title: string;
+  afterSection: number;
+  stages: Array<{ label: string }>;
+  footnotes?: Array<{ number: string; detail: string }>;
+}
+
+export type ReportChart = BarChart | TimelineChart | ComparisonChart | PipelineChart;
+
 // Enhanced one-pager with flexible narrative sections
 export interface EnhancedOnePager {
   headline: string;
@@ -76,6 +112,7 @@ export interface EnhancedOnePager {
   industry: Industry;
   sections: ContentSection[];
   stats: Array<{ number: string; label: string }>;
+  charts?: ReportChart[];
   cta: string;
 }
 
