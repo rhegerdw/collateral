@@ -1,0 +1,25 @@
+First Exploit banned SnowTeam for advertising ransomware products.
+
+Then ReHub removed their listings for both Leak Bazaar and the brute-force tool.
+
+SnowTeam was concerned about the pattern of removals.
+
+So they did what threat actors always do: they adapted.
+
+Migration to T1erOne, a forum DarkWebIQ assesses resembles a rebooted RAMP. On March 25, 2026, SnowTeam successfully posted their Leak Bazaar advertisement.
+
+T1erOne now hosts Qilin, Medusa, Hyflock, Gunra, and "The Gentlemen's RaaS." The forum maintains a public blacklist — three affiliates banned, including two Nova affiliates and one researcher who got caught.
+
+When top-tier forums enforce restrictions, the infrastructure doesn't disappear. It relocates.
+
+The underground economy finds a way.
+
+#DarkWeb #ThreatIntelligence #CyberCrime #Ransomware #ThreatActors
+
+---
+Type: narrative_story
+Topic: Forum migration pattern
+Schedule: Thursday, 2026-04-17 at 12:00 PM ET (Week 2)
+CTA: Forum volatility doesn't stop threat actors. What does this mean for tracking their operations?
+First comment: Add report link as first comment after posting
+Character count: 829

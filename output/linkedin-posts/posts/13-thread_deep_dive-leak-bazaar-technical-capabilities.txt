@@ -1,0 +1,33 @@
+Leak Bazaar isn't just another leak site.
+
+It's a four-stage data refinement pipeline that transforms raw exfiltrated corporate data into structured intelligence products. Here's how it works:
+
+→ AUTOMATED FILTERING
+ML-assisted removal of system debris (OS backups, DLLs, ISOs) combined with NLP-based text analysis of document arrays.
+
+→ DATABASE REVERSE ENGINEERING
+Server-side parsing of raw SQL, SAP, and Oracle exports into structured Excel/CSV outputs containing financial transactions, payroll records, counterparty data. Currently in beta.
+
+→ CATEGORIZATION
+Processed data segmented into buyer-oriented categories: quarterly financial reports, M&A data, R&D material including source code, and personal data.
+
+→ MANUAL VALIDATION
+In-house analyst review before listing.
+
+The platform generates structured analytical reports identifying OFAC/SDN violations, shadow accounting, unpublished financial results — negotiation pressure tools replacing crude file listings.
+
+Buyers can purchase specific categories rather than entire dumps. Two models: exclusive (full price, data removed after sale) or shared (lower price, remains available for resale).
+
+Revenue split: 70% supplier, 30% platform.
+
+For organizations, this changes everything. Refusing to pay no longer eliminates data value — it triggers structured monetization.
+
+#ThreatIntelligence #DataBreach #Ransomware #DarkWeb #IncidentResponse
+
+---
+Type: thread_deep_dive
+Topic: Leak Bazaar technical capabilities
+Schedule: Tuesday, 2026-04-29 at 8:00 AM ET (Week 4)
+CTA: Save this breakdown for your post-breach response planning
+First comment: Add report link as first comment after posting
+Character count: 1403

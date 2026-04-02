@@ -1,0 +1,30 @@
+The ransomware economy underwent fundamental transformation in 2025. Payment rates collapsed while attack volume exploded. Here's the data breakdown:
+
+→ PAYMENT RATE COLLAPSE
+28% of victims paid in 2025 (down from 63% in 2024, 79% in 2022). Total on-chain payments fell to $820 million despite record activity.
+
+→ ATTACK VOLUME SURGE
+50% year-over-year increase in claimed attacks. 8,000+ organizations publicly named on leak sites — the most active year on record.
+
+→ ACCESS PRICE DEFLATION
+Network access prices crashed 69%: $1,427 in Q1 2023 → $439 in Q1 2026. Driven by automation, AI-assisted tooling, oversupply from infostealer logs.
+
+→ PAYMENT BIFURCATION
+While fewer victims pay, those who do face exponentially higher demands. Median payment rose 368% year-over-year. Single largest payment: $75 million to Dark Angels.
+
+→ MONETIZATION GAP
+Growing inventory of exfiltrated data from non-paying victims creates new market opportunity: structured data monetization platforms like Leak Bazaar.
+
+The combined effect: threat actors are seeking alternative revenue streams from stolen data when traditional extortion fails.
+
+This shift from binary extortion to asset monetization fundamentally changes post-breach risk calculations.
+
+#ThreatIntelligence #Ransomware #RiskManagement #DataBreach #CISO
+
+---
+Type: thread_deep_dive
+Topic: Ransomware economics transformation
+Schedule: Thursday, 2026-05-01 at 12:00 PM ET (Week 4)
+CTA: Save this analysis for updating your ransomware risk models
+First comment: Add report link as first comment after posting
+Character count: 1303

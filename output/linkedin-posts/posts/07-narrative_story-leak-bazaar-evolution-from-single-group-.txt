@@ -1,0 +1,25 @@
+October 2025: Leak Bazaar was Akira ransomware's private data monetization tool.
+
+March 2026: It became a multi-supplier exchange welcoming "any and all ransomware groups."
+
+The transformation tells a story about criminal ecosystem economics.
+
+SnowTeam, the initial access broker behind the platform, initially built it to monetize Akira's non-paying victims. Internal data showed several early victims matched Akira's leak site listings.
+
+But the economics were compelling enough to scale. Why limit revenue to one ransomware group when the entire ecosystem faces the same monetization problem?
+
+By Q1 2026, SnowTeam introduced referral commissions, analyst validation services, and structured analytical reports. They positioned Leak Bazaar as ecosystem infrastructure, not a group-specific tool.
+
+The platform now processes any exfiltrated data into buyer-specific categories: M&A intelligence, R&D materials, financial reports, personal data.
+
+From niche solution to criminal marketplace in six months.
+
+#Ransomware #ThreatIntelligence #DarkWeb #CyberCrime
+
+---
+Type: narrative_story
+Topic: Leak Bazaar evolution from single-group to exchange
+Schedule: Thursday, 2026-04-17 at 12:00 PM ET (Week 2)
+CTA: What other single-group tools do you see evolving into broader criminal services?
+First comment: Add report link as first comment after posting
+Character count: 1060

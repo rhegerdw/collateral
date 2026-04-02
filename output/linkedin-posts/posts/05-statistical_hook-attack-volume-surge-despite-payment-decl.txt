@@ -1,0 +1,23 @@
+8,000+ organizations hit leak sites in 2025 — a 50% surge.
+
+But payment rates dropped to just 28%.
+
+Threat actors are playing a volume game with terrible conversion rates.
+
+It's like running an email marketing campaign with 72% bounce rate, then doubling your send volume instead of fixing deliverability.
+
+This unsustainable math is forcing ecosystem evolution. Operators can't keep burning resources on non-paying victims.
+
+Enter data monetization platforms like Leak Bazaar — turning exfiltrated data into structured, sellable intelligence products.
+
+When extortion fails, threat actors are pivoting to data-as-a-service.
+
+#Ransomware #ThreatIntelligence #DataBreach #CyberSecurity
+
+---
+Type: statistical_hook
+Topic: Attack volume surge despite payment decline
+Schedule: Tuesday, 2026-04-15 at 8:00 AM ET (Week 2)
+CTA: Are you monitoring for structured data resale after breach incidents?
+First comment: Add report link as first comment after posting
+Character count: 684

@@ -1,0 +1,19 @@
+Ransomware payment rates collapsed from 63% to 28% in just one year.
+
+Yet attack volume surged 50%, with over 8,000 organizations publicly named on leak sites in 2025 — making it the most active year on record.
+
+The math is brutal: operators are working harder for less money. Total on-chain payments dropped to $820M despite unprecedented attack volume.
+
+This isn't sustainable economics. When payment probability drops by half but attack costs remain fixed, something has to give.
+
+The question isn't whether the ransomware model will evolve — it's how quickly operators will find new revenue streams from stolen data.
+
+#Ransomware #ThreatIntelligence #CyberSecurity #CISO
+
+---
+Type: statistical_hook
+Topic: Ransomware payment rate collapse
+Schedule: Tuesday, 2026-04-08 at 8:00 AM ET (Week 1)
+CTA: Ask your network: How are you adjusting threat models for this new reality?
+First comment: Add report link as first comment after posting
+Character count: 674

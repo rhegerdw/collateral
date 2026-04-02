@@ -1,0 +1,21 @@
+The cybersecurity industry celebrates declining ransom payments. 28% in 2025 vs 63% in 2024.
+
+But here's what we're missing: the access broker market is responding with industrialized automation and price deflation.
+
+Network access prices crashed 69% in three years. $50,000 brute-force systems targeting eight VPN protocols are now commercial products with enterprise support.
+
+When turnkey offensive tooling lowers barriers to entry, more actors can generate high-volume access offers. The ransomware supply chain benefits from a deeper, cheaper pool of initial access.
+
+We're winning the payment battle but potentially losing the access war.
+
+The threat landscape is evolving faster than our defensive strategies.
+
+#ThreatIntelligence #AccessBrokers #VPNSecurity #CyberCrime #SecurityOperations
+
+---
+Type: hot_take_contrarian
+Topic: Access broker market dynamics
+Schedule: Wednesday, 2026-05-07 at 10:00 AM ET (Week 5)
+CTA: Are we focusing on the wrong metrics in ransomware defense?
+First comment: Add report link as first comment after posting
+Character count: 797
