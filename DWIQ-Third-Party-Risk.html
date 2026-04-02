@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DarkWebIQ - Third-Party Risk in a Noisy Supply Chain</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      color: #111;
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 48px 40px;
+      line-height: 1.7;
+      background: #fff;
+    }
+
+    /* --- Header --- */
+    header {
+      border-bottom: 4px solid #000;
+      padding-bottom: 28px;
+      margin-bottom: 40px;
+    }
+    .logo {
+      height: 40px;
+      display: block;
+      margin-bottom: 16px;
+    }
+    .report-type {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #fff;
+      background: #ff4400;
+      padding: 3px 10px;
+      margin-bottom: 16px;
+    }
+    h1 {
+      font-size: 32px;
+      font-weight: 900;
+      line-height: 1.2;
+      margin-bottom: 12px;
+    }
+    .subheadline {
+      font-size: 16px;
+      color: #4b5563;
+      line-height: 1.5;
+      margin-bottom: 12px;
+    }
+    .meta {
+      font-size: 13px;
+      color: #9ca3af;
+    }
+    .meta strong { color: #6b7280; }
+
+    /* --- Sections --- */
+    section { margin-bottom: 36px; }
+    h2 {
+      font-size: 17px;
+      font-weight: 700;
+      color: #ff4400;
+      margin-bottom: 14px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    .body p {
+      color: #374151;
+      margin-bottom: 16px;
+      font-size: 14.5px;
+    }
+    .body p:last-child { margin-bottom: 0; }
+
+    /* --- Stats Grid --- */
+    .stats-grid {
+      display: grid;
+      gap: 12px;
+      text-align: center;
+      margin-bottom: 16px;
+    }
+    .stats-grid.cols-2 { grid-template-columns: 1fr 1fr; }
+    .stats-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+    .stats-grid.cols-4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
+    .stat-box {
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      padding: 18px 12px;
+    }
+    .stat-box.highlight {
+      background: #fff5f0;
+      border-color: #ff4400;
+    }
+    .stat-number {
+      font-size: 28px;
+      font-weight: 900;
+      color: #111;
+    }
+    .stat-number.accent { color: #ff4400; }
+    .stat-label {
+      font-size: 12px;
+      color: #6b7280;
+      margin-top: 4px;
+      line-height: 1.4;
+    }
+
+    /* --- Comparison Table --- */
+    .compare-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      margin-bottom: 16px;
+    }
+    .compare-table th {
+      text-align: left;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 10px 12px;
+      border-bottom: 2px solid #111;
+    }
+    .compare-table th:first-child { color: #6b7280; }
+    .compare-table th:last-child { color: #ff4400; }
+    .compare-table td {
+      padding: 10px 12px;
+      border-bottom: 1px solid #e5e7eb;
+      color: #374151;
+      vertical-align: top;
+    }
+    .compare-table td:last-child { font-weight: 600; color: #111; }
+
+    /* --- Anatomy Cards --- */
+    .anatomy-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .anatomy-card {
+      border: 1px solid #e5e7eb;
+      padding: 16px;
+      border-left: 4px solid #ff4400;
+    }
+    .anatomy-card-title {
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .anatomy-card-desc {
+      font-size: 12.5px;
+      color: #374151;
+      line-height: 1.5;
+    }
+
+    /* --- Callout Box --- */
+    .callout {
+      background: #111;
+      color: #fff;
+      padding: 24px;
+      margin-bottom: 36px;
+    }
+    .callout h3 {
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #ff4400;
+      margin-bottom: 10px;
+    }
+    .callout p {
+      font-size: 14px;
+      line-height: 1.6;
+      color: #e5e7eb;
+      margin-bottom: 10px;
+    }
+    .callout p:last-child { margin-bottom: 0; }
+    .callout strong { color: #fff; }
+
+    /* --- Cost Grid --- */
+    .cost-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .cost-card {
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      padding: 16px;
+    }
+    .cost-number {
+      font-size: 22px;
+      font-weight: 900;
+      color: #ff4400;
+      margin-bottom: 4px;
+    }
+    .cost-label {
+      font-size: 13px;
+      font-weight: 700;
+      color: #111;
+      margin-bottom: 6px;
+    }
+    .cost-desc {
+      font-size: 12px;
+      color: #6b7280;
+      line-height: 1.4;
+    }
+
+    /* --- Outcome Stats --- */
+    .outcome-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .outcome-card {
+      padding: 16px;
+      border-left: 4px solid #ff4400;
+      background: #fff5f0;
+    }
+    .outcome-number {
+      font-size: 28px;
+      font-weight: 900;
+      color: #ff4400;
+    }
+    .outcome-label {
+      font-size: 12px;
+      color: #374151;
+      margin-top: 4px;
+      line-height: 1.4;
+    }
+
+    /* --- Blockquote --- */
+    .pull-quote {
+      border-left: 4px solid #ff4400;
+      padding: 16px 20px;
+      margin: 20px 0;
+      background: #f9fafb;
+    }
+    .pull-quote p {
+      font-size: 15px;
+      font-style: italic;
+      color: #374151;
+      line-height: 1.6;
+      margin-bottom: 6px;
+    }
+    .pull-quote .attribution {
+      font-size: 12px;
+      font-style: normal;
+      color: #6b7280;
+    }
+
+    /* --- List --- */
+    .styled-list {
+      list-style: none;
+      margin-bottom: 16px;
+    }
+    .styled-list li {
+      font-size: 14px;
+      color: #374151;
+      padding: 6px 0 6px 20px;
+      position: relative;
+      line-height: 1.5;
+    }
+    .styled-list li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 13px;
+      width: 8px;
+      height: 8px;
+      background: #ff4400;
+    }
+
+    /* --- Footer --- */
+    .classification {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      color: #9ca3af;
+      text-align: center;
+      margin-top: 40px;
+      padding-top: 20px;
+      border-top: 1px solid #e5e7eb;
+    }
+
+    @media print {
+      body { padding: 24px; }
+      .page-break { page-break-before: always; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAyAAAAFNCAYAAAD4hQvFAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyVpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNi1jMTQ4IDc5LjE2NDAzNiwgMjAxOS8wOC8xMy0wMTowNjo1NyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIDIxLjAgKE1hY2ludG9zaCkiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6MTY2MTk2ODA5RjA5MTFFQkE4RTFBQ0FCNkY0RTI4NjMiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6MTY2MTk2ODE5RjA5MTFFQkE4RTFBQ0FCNkY0RTI4NjMiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDoxNjYxOTY3RTlGMDkxMUVCQThFMUFDQUI2RjRFMjg2MyIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDoxNjYxOTY3RjlGMDkxMUVCQThFMUFDQUI2RjRFMjg2MyIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PlpyMXkAADqjSURBVHja7N0J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" alt="DarkWebIQ" class="logo">
+    <div class="report-type">InfraGard Conference Presentation</div>
+    <h1>Third-Party Risk in a Noisy Supply Chain</h1>
+    <p class="subheadline">Why the cyber stack isn't enough &mdash; and how offensive-minded intelligence built on direct threat-actor relationships closes the gap traditional tools leave open.</p>
+    <p class="meta"><strong>Presented by:</strong> DarkWebIQ &nbsp;|&nbsp; <strong>Topic:</strong> Practicing Intelligence</p>
+  </header>
+
+  <!-- THE PROBLEM -->
+  <section class="body">
+    <h2>Why Third-Party Risk Demands a New Intelligence Standard</h2>
+    <p>Third-party compromise is not new &mdash; but the scale and opacity of access paths are growing. Mass exploitation, infostealer logs, and poor hygiene in MSPs create invisible exposure that traditional tooling misses.</p>
+    <p>Most alerts focus on <strong>symptoms</strong>: malware detections, abnormal log-ins, phishing attempts, anomalous behavior. The real question is about <strong>root posture risk</strong> &mdash; why the access was possible in the first place: an overprivileged vendor account, an unmonitored VPN user, a password stolen weeks ago and never rotated.</p>
+  </section>
+
+  <!-- JPMORGAN QUOTE -->
+  <div class="pull-quote">
+    <p>&ldquo;SaaS has become the default&hellip; embedding concentration risk into global critical infrastructure.&rdquo;</p>
+    <div class="attribution">&mdash; Patrick Opet, CISO, JPMorgan Chase (May 2025)</div>
+  </div>
+
+  <!-- WHAT'S MISSING -->
+  <section class="body">
+    <h2>What's Missing from the Cyber Stack</h2>
+    <p>Every organization in this room has a defensive stack: MFA, EDR, XDR, GRC, segmentation, phishing simulations. These are critical. Keep them. Build on them.</p>
+    <p>But fewer are asking the harder questions:</p>
+    <ul class="styled-list">
+      <li>Who's targeting your credentials right now?</li>
+      <li>How is your remote access footprint appearing on stealer logs?</li>
+      <li>Is your MSP being used as a brokered foothold?</li>
+      <li>What does your organization look like to the access economy?</li>
+    </ul>
+    <p>The answer isn't more defensive tooling &mdash; it's <strong>offensive-minded intelligence.</strong> Not threat feeds or scraping. Human-driven, source-facing collection that surfaces compromised access <em>before</em> threat indicators ever emerge.</p>
+  </section>
+
+  <!-- DEFENSIVE vs OFFENSIVE TABLE -->
+  <section>
+    <h2>Defensive Posture vs. Offensive Intelligence</h2>
+    <table class="compare-table">
+      <thead>
+        <tr>
+          <th>Defensive Posture</th>
+          <th>Offensive Intelligence Posture</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Detect anomalies</td><td>Identify compromised access before use</td></tr>
+        <tr><td>Block threats</td><td>Trace how they're brokered</td></tr>
+        <tr><td>Monitor traffic</td><td>Intercept underground movement</td></tr>
+        <tr><td>React to incidents</td><td>Prevent adversary foothold</td></tr>
+        <tr><td>Validate claims</td><td>Debunk with firsthand proof</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- HOW WE GOT HERE -->
+  <section class="body">
+    <h2>How We Got Here</h2>
+    <p>What we call "third-party risk" today is the byproduct of a decade of scaling that accelerated under pressure of convenience, cost savings, and reliance on third-party expertise &mdash; <strong>not intentional security design.</strong> The system was architected for efficiency, not resilience.</p>
+    <p><strong>COVID-19 was the inflection point.</strong> In 2020, enterprises moved to remote access overnight &mdash; opening ports, extending privileges, and scaling trust faster than oversight. RDP attacks grew <strong>768%</strong> in 2020, totaling 29 billion attempts (ReliaQuest). Ransomware attacks spiked <strong>148%</strong> in March 2020 alone (VMware). Threat actors exploited urgency &mdash; not technical flaws &mdash; as their entry point.</p>
+    <p>By Q1 2025, ransomware reached record highs: <strong>2,000+ victims, 70+ active groups</strong> (GuidePoint Security) &mdash; many exploiting remote services and credential access. Shared tools became shared exposure. Vendor ecosystems expanded faster than they could be secured.</p>
+  </section>
+
+  <!-- RISING COST -->
+  <section>
+    <h2>The Rising Cost of Inaction</h2>
+    <div class="cost-grid">
+      <div class="cost-card">
+        <div class="cost-number">$1.1B</div>
+        <div class="cost-label">Ransom Payments in 2023</div>
+        <div class="cost-desc">Highest annual total to date. (WIRED, 2024)</div>
+      </div>
+      <div class="cost-card">
+        <div class="cost-number">$2.73M</div>
+        <div class="cost-label">Avg. Recovery Cost in 2024</div>
+        <div class="cost-desc">Up from $1.82M in 2023 &mdash; excluding ransom. (Cybereason, 2024)</div>
+      </div>
+      <div class="cost-card">
+        <div class="cost-number">78%</div>
+        <div class="cost-label">Re-Breached After Paying</div>
+        <div class="cost-desc">63% faced higher ransom demands the second time.</div>
+      </div>
+      <div class="cost-card">
+        <div class="cost-number">$124.2B</div>
+        <div class="cost-label">Annual Cost to U.S. Businesses</div>
+        <div class="cost-desc">Ransom, downtime, recovery, and reputational damage combined.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ANATOMY -->
+  <section>
+    <h2>Anatomy of Third-Party Exposure</h2>
+    <div class="anatomy-grid">
+      <div class="anatomy-card">
+        <div class="anatomy-card-title">Infostealer Logs &rarr; Exposed Credentials</div>
+        <div class="anatomy-card-desc">Malware (RedLine, Raccoon, Vidar) steals browser-saved passwords, session cookies, and VPN/RMM credentials. Logs are circulated in private Telegram groups, access marketplaces, and via direct relationships with brokers.</div>
+      </div>
+      <div class="anatomy-card">
+        <div class="anatomy-card-title">Weak Segmentation &rarr; Pivot Path</div>
+        <div class="anatomy-card-desc">If your HVAC vendor has access to your billing system, you've got a segmentation issue. Poor network isolation turns a vendor compromise into full lateral movement.</div>
+      </div>
+      <div class="anatomy-card">
+        <div class="anatomy-card-title">Overlapping Identities &rarr; Lateral Movement</div>
+        <div class="anatomy-card-desc">Vendors reusing passwords across client environments. IT admins using personal email as backup for corp accounts. Single SSO shared between vendors and internal users = risk across tenants.</div>
+      </div>
+      <div class="anatomy-card">
+        <div class="anatomy-card-title">Unnoticed Reuse &rarr; Repeat Compromise</div>
+        <div class="anatomy-card-desc">Credential stolen months ago via infostealer, password never rotated, new IAB picks it up and sells it again. Often reused across multiple SaaS platforms (O365, VPN, Salesforce).</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DWIQ APPROACH -->
+  <div class="callout">
+    <h3>The DarkWebIQ Approach</h3>
+    <p>We focus on the root cause: the <strong>Initial Access Broker ecosystem.</strong> We identify not just the breach, but the brokered access path before it becomes ransomware.</p>
+    <p>We trace credential lineage back to stealer logs, forums, and sale patterns &mdash; through <strong>direct, one-on-one relationships with threat actors</strong> developed using misattributable personas embedded inside criminal networks. This is not passive marketplace scraping.</p>
+    <p>We notify not for noise &mdash; but when posture can be changed and risk can be mitigated. Every alert is <strong>vetted</strong>. Actionability is the gold standard of real intelligence.</p>
+  </div>
+
+  <!-- TRADECRAFT -->
+  <section class="body">
+    <h2>What Offensive Intelligence Operations Require</h2>
+    <p>Running disciplined, effective intelligence operations in a misattributable underground ecosystem demands:</p>
+    <ul class="styled-list">
+      <li><strong>Undercover personas</strong> &mdash; Built with backstory, behavioral consistency, and operational purpose</li>
+      <li><strong>Reputation seasoning</strong> &mdash; Time + presence = credibility in hard-to-access forums, gated channels, encrypted markets</li>
+      <li><strong>Technical misattribution</strong> &mdash; Crypto hygiene, burner wallet movement, clean VMs, proxies, unmanaged cloud infrastructure</li>
+      <li><strong>Cultural fluency</strong> &mdash; Underground etiquette, language, timing, nuance</li>
+      <li><strong>Street expertise</strong> &mdash; Reading deception, navigating actor intent, defending cover challenges, negotiating like a criminal</li>
+    </ul>
+  </section>
+
+  <!-- OUTCOMES -->
+  <section>
+    <h2>Intelligence Outcomes &mdash; All Clients</h2>
+    <div class="outcome-grid">
+      <div class="outcome-card">
+        <div class="outcome-number">72</div>
+        <div class="outcome-label">Access broker interceptions this month &mdash; threats stopped before resale</div>
+      </div>
+      <div class="outcome-card">
+        <div class="outcome-number">1,627</div>
+        <div class="outcome-label">All-time access broker interceptions &mdash; credentials acquired before ransomware groups</div>
+      </div>
+      <div class="outcome-card">
+        <div class="outcome-number">80</div>
+        <div class="outcome-label">FBI notifications this month &mdash; national-level alerts delivered in real time</div>
+      </div>
+      <div class="outcome-card">
+        <div class="outcome-number">2,183</div>
+        <div class="outcome-label">All-time FBI notifications &mdash; helping law enforcement intervene early</div>
+      </div>
+    </div>
+    <div class="stats-grid cols-3">
+      <div class="stat-box highlight">
+        <div class="stat-number accent">482</div>
+        <div class="stat-label">Threat Actors Engaged All-Time</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-number">1,627</div>
+        <div class="stat-label">Access Broker Interceptions</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-number">2,183</div>
+        <div class="stat-label">FBI Notifications</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CLOSING -->
+  <section class="body">
+    <h2>Tradecraft Over Alerts</h2>
+    <p>Third-party risk intelligence isn't a product. It's a pattern of presence and discernment. Where others issue tickets, we offer insight that shifts posture.</p>
+    <p>To those managing supply chain security &mdash; we offer more than detection. We offer discernment: <strong>less noise, more clarity. Less reaction, more posture insight. Less marketing, more actionability.</strong></p>
+  </section>
+
+  <div class="classification">DARKWEBIQ &mdash; PRACTICING INTELLIGENCE</div>
+
+</body>
+</html>
