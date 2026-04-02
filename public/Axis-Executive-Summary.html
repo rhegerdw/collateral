@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DarkWebIQ - AXIS Portfolio Exposure Diagnostic</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      color: #111;
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 48px 40px;
+      line-height: 1.7;
+      background: #fff;
+    }
+
+    /* --- Header --- */
+    header {
+      border-bottom: 4px solid #000;
+      padding-bottom: 28px;
+      margin-bottom: 40px;
+    }
+    .brand {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      color: #6b7280;
+      margin-bottom: 8px;
+    }
+    .report-type {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #fff;
+      background: #ff4400;
+      padding: 3px 10px;
+      margin-bottom: 16px;
+    }
+    h1 {
+      font-size: 30px;
+      font-weight: 900;
+      line-height: 1.2;
+      margin-bottom: 12px;
+    }
+    .subheadline {
+      font-size: 16px;
+      color: #4b5563;
+      line-height: 1.5;
+      margin-bottom: 12px;
+    }
+    .meta {
+      font-size: 13px;
+      color: #9ca3af;
+    }
+    .meta strong { color: #6b7280; }
+
+    /* --- Sections --- */
+    section { margin-bottom: 36px; }
+    h2 {
+      font-size: 17px;
+      font-weight: 700;
+      color: #ff4400;
+      margin-bottom: 14px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    .body p {
+      color: #374151;
+      margin-bottom: 16px;
+      font-size: 14.5px;
+    }
+    .body p:last-child { margin-bottom: 0; }
+
+    /* --- Stats Grid --- */
+    .stats-grid {
+      display: grid;
+      gap: 12px;
+      text-align: center;
+      margin-bottom: 12px;
+    }
+    .stats-grid.cols-2 { grid-template-columns: 1fr 1fr; }
+    .stats-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+    .stats-grid.cols-4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
+    .stat-box {
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      padding: 18px 12px;
+    }
+    .stat-box.highlight {
+      background: #fff5f0;
+      border-color: #ff4400;
+    }
+    .stat-number {
+      font-size: 28px;
+      font-weight: 900;
+      color: #111;
+    }
+    .stat-number.accent { color: #ff4400; }
+    .stat-label {
+      font-size: 12px;
+      color: #6b7280;
+      margin-top: 4px;
+      line-height: 1.4;
+    }
+
+    /* --- Funnel --- */
+    .funnel {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      margin: 24px 0;
+    }
+    .funnel-step {
+      text-align: center;
+      padding: 16px 20px;
+      position: relative;
+      flex: 1;
+    }
+    .funnel-step .num {
+      font-size: 32px;
+      font-weight: 900;
+    }
+    .funnel-step .lbl {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #6b7280;
+      margin-top: 4px;
+    }
+    .funnel-arrow {
+      font-size: 24px;
+      color: #d1d5db;
+      flex-shrink: 0;
+    }
+
+    /* --- Exposure Table --- */
+    .exposure-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      margin-bottom: 16px;
+    }
+    .exposure-table th {
+      text-align: left;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #6b7280;
+      padding: 8px 10px;
+      border-bottom: 2px solid #111;
+    }
+    .exposure-table td {
+      padding: 8px 10px;
+      border-bottom: 1px solid #e5e7eb;
+      color: #374151;
+    }
+    .exposure-table tr:last-child td { border-bottom: none; }
+    .badge {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      padding: 2px 8px;
+      border-radius: 2px;
+    }
+    .badge-critical { background: #dc2626; color: #fff; }
+    .badge-multi { background: #111; color: #fff; }
+    .badge-amber { background: #f59e0b; color: #fff; }
+
+    /* --- Bar Chart --- */
+    .bar-chart { width: 100%; margin-bottom: 16px; }
+    .bar-row {
+      display: flex;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .bar-label {
+      width: 160px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #374151;
+      text-align: right;
+      padding-right: 12px;
+      flex-shrink: 0;
+    }
+    .bar-track {
+      flex: 1;
+      background: #f3f4f6;
+      height: 22px;
+      position: relative;
+    }
+    .bar-fill {
+      height: 100%;
+      background: #ff4400;
+      display: flex;
+      align-items: center;
+      padding-left: 8px;
+      min-width: 32px;
+    }
+    .bar-fill.secondary { background: #f59e0b; }
+    .bar-value {
+      font-size: 11px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    /* --- Tier Cards --- */
+    .tier-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .tier-card {
+      padding: 16px;
+      border-left: 4px solid;
+    }
+    .tier-card.t1 { border-color: #3b82f6; background: #f0f7ff; }
+    .tier-card.t2 { border-color: #f59e0b; background: #fffbeb; }
+    .tier-card.t3 { border-color: #dc2626; background: #fef2f2; }
+    .tier-card.t4 { border-color: #dc2626; background: #fef2f2; border-left-width: 6px; }
+    .tier-title {
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .tier-count {
+      font-size: 24px;
+      font-weight: 900;
+      margin-bottom: 4px;
+    }
+    .tier-desc {
+      font-size: 12px;
+      color: #6b7280;
+      line-height: 1.4;
+    }
+
+    /* --- Callout Box --- */
+    .callout {
+      background: #111;
+      color: #fff;
+      padding: 24px;
+      margin-bottom: 36px;
+    }
+    .callout h3 {
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #ff4400;
+      margin-bottom: 10px;
+    }
+    .callout p {
+      font-size: 14px;
+      line-height: 1.6;
+      color: #e5e7eb;
+    }
+    .callout strong { color: #fff; }
+
+    /* --- Double-Threat --- */
+    .threat-cards {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .threat-card {
+      border: 1px solid #e5e7eb;
+      padding: 16px;
+    }
+    .threat-card-name {
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 2px;
+    }
+    .threat-card-domain {
+      font-size: 12px;
+      color: #9ca3af;
+      font-family: monospace;
+      margin-bottom: 12px;
+    }
+    .threat-card-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+    .threat-card-label.is { color: #f59e0b; }
+    .threat-card-label.iab { color: #dc2626; }
+    .threat-card-detail {
+      font-size: 12px;
+      color: #374151;
+      line-height: 1.4;
+      margin-bottom: 10px;
+    }
+
+    /* --- CTA --- */
+    .cta {
+      border-top: 2px solid #000;
+      padding-top: 24px;
+    }
+    .cta p { font-size: 14px; color: #374151; margin-bottom: 12px; }
+    .cta strong { font-weight: 700; }
+
+    /* --- Footer --- */
+    .classification {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      color: #9ca3af;
+      text-align: center;
+      margin-top: 40px;
+      padding-top: 20px;
+      border-top: 1px solid #e5e7eb;
+    }
+
+    /* --- Print --- */
+    @media print {
+      body { padding: 24px; }
+      .page-break { page-break-before: always; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="brand">DARKWEBIQ</div>
+    <div class="report-type">Portfolio Exposure Diagnostic</div>
+    <h1>AXIS 100: Threat Telemetry &amp; Exposure Analysis</h1>
+    <p class="subheadline">An executive analysis of Initial Access Broker and Infostealer exposure across 100 portfolio domains &mdash; sourced from direct threat-actor engagement and proprietary intelligence collection.</p>
+    <p class="meta"><strong>Prepared for:</strong> AXIS &nbsp;|&nbsp; <strong>Date:</strong> April 2026 &nbsp;|&nbsp; <strong>Observation Window:</strong> July 2024 &ndash; March 2026 &nbsp;|&nbsp; <strong>Classification:</strong> Confidential</p>
+  </header>
+
+  <!-- HEADLINE STATS -->
+  <section>
+    <h2>Portfolio at a Glance</h2>
+    <div class="funnel">
+      <div class="funnel-step">
+        <div class="num">100</div>
+        <div class="lbl">Domains Submitted</div>
+      </div>
+      <div class="funnel-arrow">&rarr;</div>
+      <div class="funnel-step">
+        <div class="num">99</div>
+        <div class="lbl">Validated Targets</div>
+      </div>
+      <div class="funnel-arrow">&rarr;</div>
+      <div class="funnel-step">
+        <div class="num" style="color:#ff4400;">23</div>
+        <div class="lbl">With Exposure</div>
+      </div>
+      <div class="funnel-arrow">&rarr;</div>
+      <div class="funnel-step">
+        <div class="num">76</div>
+        <div class="lbl">Clean Domains</div>
+      </div>
+    </div>
+
+    <div class="stats-grid cols-4">
+      <div class="stat-box highlight">
+        <div class="stat-number accent">23%</div>
+        <div class="stat-label">Portfolio Exposure Rate</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-number">19</div>
+        <div class="stat-label">Infostealer Targets</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-number">7</div>
+        <div class="stat-label">IAB Targets</div>
+      </div>
+      <div class="stat-box highlight">
+        <div class="stat-number accent">3</div>
+        <div class="stat-label">Dual-Vector Exposure</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHAT WE FOUND -->
+  <section class="body">
+    <h2>What We Found</h2>
+    <p>DarkWebIQ analysts ran the AXIS 100 portfolio against our proprietary intelligence holdings &mdash; including Infostealer bot logs and Initial Access Broker victim data obtained through direct, one-on-one engagement with threat actors operating inside criminal networks.</p>
+    <p>Across an 18-month observation window, <strong>nearly one in four portfolio companies showed active compromise telemetry.</strong> The 23 affected entities generated a combined <strong>1,158 individual Infostealer log entries</strong> and <strong>12 confirmed IAB listings</strong>, with three companies exhibiting the highest-risk pattern: overlapping Infostealer infections and confirmed network access sales.</p>
+    <p>This is not theoretical exposure. These are vetted signals of credentials already harvested by malware and, in the most critical cases, network access already listed for sale to ransomware operators.</p>
+  </section>
+
+  <!-- INFOSTEALER DEEP DIVE -->
+  <section>
+    <h2>Infostealer Exposure &mdash; 1,158 Log Entries Across 19 Companies</h2>
+    <div class="body">
+      <p>Infostealer malware executes on compromised endpoints, harvesting saved credentials, session cookies, and browser data. High volumes indicate poor endpoint hygiene, unmanaged contractor devices, or systemic credential reuse. The top six domains alone account for <strong>over 1,000 individual bot infections.</strong></p>
+    </div>
+
+    <div class="bar-chart">
+      <div class="bar-row">
+        <div class="bar-label">lg.com</div>
+        <div class="bar-track"><div class="bar-fill" style="width:100%;"><span class="bar-value">371</span></div></div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label">paloaltonetworks.com</div>
+        <div class="bar-track"><div class="bar-fill" style="width:66%;"><span class="bar-value">245</span></div></div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label">ocado.com</div>
+        <div class="bar-track"><div class="bar-fill" style="width:48%;"><span class="bar-value">179</span></div></div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label">bni.co.id</div>
+        <div class="bar-track"><div class="bar-fill" style="width:30%;"><span class="bar-value">112</span></div></div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label">raiffeisen.at</div>
+        <div class="bar-track"><div class="bar-fill" style="width:28%;"><span class="bar-value">105</span></div></div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label">genpact.com</div>
+        <div class="bar-track"><div class="bar-fill" style="width:13%;"><span class="bar-value">49</span></div></div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label">panasonic.com</div>
+        <div class="bar-track"><div class="bar-fill" style="width:13%;"><span class="bar-value">48</span></div></div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label">12 others</div>
+        <div class="bar-track"><div class="bar-fill secondary" style="width:13%;"><span class="bar-value">49</span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- IAB TABLE -->
+  <section>
+    <h2>IAB Exposure &mdash; 7 Companies With Confirmed Network Access Listings</h2>
+    <div class="body">
+      <p>Initial Access Brokers are human operators who breach corporate perimeters and sell persistent network access to ransomware syndicates. A single IAB listing represents a confirmed, critical perimeter failure &mdash; not a speculative risk.</p>
+    </div>
+
+    <table class="exposure-table">
+      <thead>
+        <tr>
+          <th>Company</th>
+          <th>Domain</th>
+          <th>Event Date</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Panasonic ME</td>
+          <td style="font-family:monospace;">panasonic.com</td>
+          <td>Jun 2025 &ndash; Feb 2026</td>
+          <td><span class="badge badge-multi">MULTI-VECTOR (6x)</span></td>
+        </tr>
+        <tr>
+          <td>Cole, Scott &amp; Kissane, PA</td>
+          <td style="font-family:monospace;">csklegal.com</td>
+          <td>Dec 2025</td>
+          <td><span class="badge badge-critical">CRITICAL</span></td>
+        </tr>
+        <tr>
+          <td>Angel Oak Companies, LP</td>
+          <td style="font-family:monospace;">angeloakcompanies.com</td>
+          <td>Feb 2026</td>
+          <td><span class="badge badge-critical">CRITICAL</span></td>
+        </tr>
+        <tr>
+          <td>American College of OB/GYN</td>
+          <td style="font-family:monospace;">acog.org</td>
+          <td>Sep 2025</td>
+          <td><span class="badge badge-critical">CRITICAL</span></td>
+        </tr>
+        <tr>
+          <td>Palo Alto Networks</td>
+          <td style="font-family:monospace;">paloaltonetworks.com</td>
+          <td>Oct 2023</td>
+          <td><span class="badge badge-multi">MULTI-VECTOR</span></td>
+        </tr>
+        <tr>
+          <td>Cementos Progreso S A</td>
+          <td style="font-family:monospace;">cempro.com</td>
+          <td>Apr 2023</td>
+          <td><span class="badge badge-multi">MULTI-VECTOR</span></td>
+        </tr>
+        <tr>
+          <td>Antech Diagnostics, Inc</td>
+          <td style="font-family:monospace;">heska.com</td>
+          <td>Mar 2022</td>
+          <td><span class="badge badge-critical">CRITICAL</span></td>
+        </tr>
+      </tbody>
+    </table>
+    <p style="font-size:12px; color:#6b7280; margin-top:4px;">* Panasonic exhibits 6 distinct breach listings spanning 9 months, signaling extreme systemic vulnerability.</p>
+  </section>
+
+  <!-- DOUBLE THREAT -->
+  <section>
+    <h2>Dual-Vector Exposure &mdash; Where Infostealer Meets IAB</h2>
+    <div class="body">
+      <p>Three portfolio companies appear in <em>both</em> Infostealer logs and IAB victim menus. This overlap represents the most dangerous escalation pattern: stolen credentials from endpoint infections provide the raw material that brokers weaponize into persistent network access sold to ransomware operators.</p>
+    </div>
+
+    <div class="threat-cards">
+      <div class="threat-card">
+        <div class="threat-card-name">Panasonic ME</div>
+        <div class="threat-card-domain">panasonic.com</div>
+        <div class="threat-card-label is">Infostealer</div>
+        <div class="threat-card-detail">48 bot infections, continuous through 2025&ndash;2026</div>
+        <div class="threat-card-label iab">IAB</div>
+        <div class="threat-card-detail">6 distinct breach listings, Jun 2025 &ndash; Feb 2026</div>
+      </div>
+      <div class="threat-card">
+        <div class="threat-card-name">Palo Alto Networks</div>
+        <div class="threat-card-domain">paloaltonetworks.com</div>
+        <div class="threat-card-label is">Infostealer</div>
+        <div class="threat-card-detail">245 bot infections, massive daily volume</div>
+        <div class="threat-card-label iab">IAB</div>
+        <div class="threat-card-detail">Breach listing observed Oct 2023</div>
+      </div>
+      <div class="threat-card">
+        <div class="threat-card-name">Cementos Progreso</div>
+        <div class="threat-card-domain">cempro.com</div>
+        <div class="threat-card-label is">Infostealer</div>
+        <div class="threat-card-detail">2 isolated endpoint hits, mid-2025</div>
+        <div class="threat-card-label iab">IAB</div>
+        <div class="threat-card-detail">Breach listing observed Apr 2023</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RISK STRATIFICATION -->
+  <section>
+    <h2>Portfolio Risk Stratification</h2>
+    <div class="body">
+      <p>Translating raw telemetry into actionable tiers for underwriting and portfolio management decisions.</p>
+    </div>
+
+    <div class="tier-grid">
+      <div class="tier-card t1">
+        <div class="tier-title">Tier 1: Baseline</div>
+        <div class="tier-count">76</div>
+        <div class="tier-desc">Clean domains. No current IAB or Infostealer telemetry detected. Standard posture applies.</div>
+      </div>
+      <div class="tier-card t2">
+        <div class="tier-title">Tier 2: Elevated Hygiene Risk</div>
+        <div class="tier-count">16</div>
+        <div class="tier-desc">Infostealer exposure only. Indicates gaps in endpoint security, contractor device management, or credential hygiene. <strong>Action:</strong> Audit endpoint policies.</div>
+      </div>
+      <div class="tier-card t3">
+        <div class="tier-title">Tier 3: Critical Perimeter Breach</div>
+        <div class="tier-count">4</div>
+        <div class="tier-desc">IAB exposure only. Confirmed network compromise and persistent broker access. <strong>Action:</strong> Immediate IR verification.</div>
+      </div>
+      <div class="tier-card t4">
+        <div class="tier-title">Tier 4: Systemic Vulnerability</div>
+        <div class="tier-count">3</div>
+        <div class="tier-desc">Dual IAB + Infostealer exposure. Active bot infections paired with confirmed network access sales. Highest portfolio risk. <strong>Action:</strong> Urgent underwriting review.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- VALUE CALLOUT -->
+  <div class="callout">
+    <h3>The Intelligence Advantage</h3>
+    <p>This diagnostic was produced using DarkWebIQ's proprietary intelligence &mdash; including access to Infostealer bot logs and IAB victim data obtained through <strong>direct, one-on-one relationships with threat actors</strong> developed via misattributable personas embedded inside criminal networks. This is not passive marketplace scraping. These are vetted signals from human sources that most threat intelligence vendors cannot access.</p>
+    <p style="margin-top:12px;">In a single portfolio scan, DarkWebIQ surfaced <strong>1,158 Infostealer log entries</strong>, <strong>12 confirmed IAB listings</strong>, and <strong>3 dual-vector exposures</strong> across 23 of 99 validated companies &mdash; delivering the kind of visibility that transforms underwriting from reactive to predictive.</p>
+  </div>
+
+  <div class="classification">CONFIDENTIAL &mdash; PREPARED FOR AXIS &mdash; DO NOT DISTRIBUTE</div>
+
+</body>
+</html>
