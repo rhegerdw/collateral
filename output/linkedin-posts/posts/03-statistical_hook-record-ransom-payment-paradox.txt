@@ -1,0 +1,15 @@
+$75 million. The largest known ransom payment in recent history went to Dark Angels group, while median payments rose 368% year-over-year. Fewer victims are paying, but those who do are paying substantially more.
+
+This creates a dangerous dynamic: organizations that refuse to pay aren't eliminating their risk — they're shifting it. Threat actors are developing sophisticated platforms to monetize exfiltrated data through structured resale rather than one-time extortion.
+
+The binary choice of "pay or don't pay" no longer captures the full threat landscape.
+
+#Ransomware #CISO #ThreatIntelligence #RiskManagement
+
+---
+Type: statistical_hook
+Topic: Record ransom payment paradox
+Schedule: Wednesday, 2026-04-09 at 10:00 AM ET (Week 1)
+CTA: Discuss how your incident response plans account for long-term data monetization
+Visual: cards/03-statistical_hook-record-ransom-payment-paradox.png
+Character count: 615

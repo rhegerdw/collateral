@@ -1,0 +1,25 @@
+Three data points tell the story of ransomware's economic evolution in 2025: 28% payment rate. 8,000+ victims named on leak sites. $75 million single ransom payment.
+
+→ THE VOLUME PARADOX
+Attacks increased 50% year-over-year despite historic low payment rates. Total on-chain payments dropped to $820 million (Chainalysis). More attacks, fewer successful extortions, yet the ecosystem expanded.
+
+→ THE PAYMENT BIFURCATION
+While overall payment rates collapsed from 63% to 28%, median ransom payments rose 368% year-over-year. The Dark Angels group's $75 million payday illustrates the new dynamic: fewer victims pay, but those who do often pay substantially more.
+
+→ THE MONETIZATION GAP
+With 72% of victims refusing to pay, threat actors faced a growing inventory of exfiltrated data with no traditional monetization path. This drove innovation in alternative revenue streams: structured data processing, segmented purchasing, analytical reports.
+
+→ THE INFRASTRUCTURE RESPONSE
+Platforms like Leak Bazaar emerged to address the monetization gap. Instead of binary extortion, stolen data becomes a refinable asset with extended operational life through structured resale.
+
+The result: organizations can no longer eliminate risk by refusing to pay. The threat calculus fundamentally changed in 2025.
+
+#Ransomware #ThreatIntelligence #CISO #RiskManagement #DataBreach
+
+---
+Type: thread_deep_dive
+Topic: Ransomware economic shifts
+Schedule: Thursday, 2026-05-01 at 12:00 PM ET (Week 4)
+CTA: Reassess your incident response strategy to account for long-term data monetization risks
+Visual: cards/14-thread_deep_dive-ransomware-economic-shifts.png
+Character count: 1365

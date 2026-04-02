@@ -1,0 +1,15 @@
+8,000+ organizations named on leak sites in 2025. Payment rates at historic lows. Yet this was the most active ransomware year on record. The math reveals a fundamental shift in threat actor strategy.
+
+When traditional extortion fails 72% of the time, smart criminals adapt. They're building infrastructure to extract value from stolen data through structured analysis, segmentation, and resale.
+
+Volume isn't declining because fewer victims pay. Volume is increasing because data has become the real product.
+
+#ThreatIntelligence #Ransomware #DataBreach #CyberSecurity
+
+---
+Type: statistical_hook
+Topic: Attack volume vs payment success
+Schedule: Tuesday, 2026-04-15 at 8:00 AM ET (Week 2)
+CTA: Consider how your breach response addresses long-term data monetization risks
+Visual: cards/05-statistical_hook-attack-volume-vs-payment-success.png
+Character count: 569

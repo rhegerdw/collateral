@@ -155,13 +155,35 @@ Return JSON in this exact schema:
       "type": "statistical_hook",
       "topic": "Short topic description",
       "hook": "First 210 characters — the attention grabber before See more",
-      "body": "Full post text, 1300-1900 characters, ready to copy-paste to LinkedIn. Include hashtags at the end.",
+      "body": "Full post text ready to copy-paste to LinkedIn. Include hashtags at the end.",
       "cta": "Soft CTA suggestion for the poster",
       "hashtags": ["#ThreatIntelligence", "#Ransomware", "#CyberSecurity"],
-      "character_count": 1547
+      "character_count": 1547,
+      "visual": {
+        "type": "stat_card | comparison | bar_chart | pipeline | quote_card",
+        "headline": "Self-explanatory headline — a stranger must understand the card without reading the post",
+        "data": "structured data for the visual — see VISUAL TYPES below"
+      }
     }
   ]
 }
+
+VISUAL TYPES — every post MUST include a visual. Pick the best type for the content:
+
+stat_card: 2-4 key numbers with labels. Good for statistical hooks.
+  data: [{"number": "28%", "label": "Payment rate 2025", "highlight": true}, {"number": "63%", "label": "Payment rate 2024"}]
+
+comparison: Before/after or two contrasting values. Good for showing change.
+  data: {"left": {"number": "$1,427", "label": "Access price Q1 2023"}, "right": {"number": "$439", "label": "Access price Q1 2026"}, "change": "-69%"}
+
+bar_chart: 3-6 items with percentage or relative values. Good for rankings/distributions.
+  data: [{"label": "Fortinet", "value": 85}, {"label": "SonicWall", "value": 72}, {"label": "Cisco", "value": 68}]
+
+pipeline: 3-5 sequential stages. Good for processes. The headline MUST explain what this pipeline is and why it matters (e.g. "How Leak Bazaar Turns Stolen Data Into Revenue" not "$50K System Architecture").
+  data: {"subtitle": "One line of context explaining what this pipeline represents", "stages": ["Stage 1 label", "Stage 2 label", "Stage 3 label", "Stage 4 label"]}
+
+quote_card: A key finding or assessment as a pull quote.
+  data: {"quote": "The exact quote or finding", "attribution": "Source or context"}
 
 RULES:
 - Match the character count target for each post type:
@@ -257,17 +279,30 @@ function slugify(str) {
   return str.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 40);
 }
 
-function writeOutputs(result) {
+async function writeOutputs(result) {
   const dir = 'output/linkedin-posts';
   const postsDir = dir + '/posts';
+  const cardsDir = dir + '/cards';
   fs.mkdirSync(postsDir, { recursive: true });
+  fs.mkdirSync(cardsDir, { recursive: true });
 
   // Master JSON
   fs.writeFileSync(dir + '/campaign.json', JSON.stringify(result, null, 2));
   console.log('Written: ' + dir + '/campaign.json');
 
-  // Individual post files
-  result.posts.forEach(post => {
+  // Load image libs + fonts once
+  const [{ default: satori }, { Resvg }] = await Promise.all([import('satori'), import('@resvg/resvg-js')]);
+  const scriptDir = __dirname || '.';
+  const fontsDir = require('path').resolve(scriptDir, '..', 'fonts');
+  const fonts = [
+    { name: 'Inter', data: fs.readFileSync(fontsDir + '/Inter-Regular.ttf'), weight: 400, style: 'normal' },
+    { name: 'Inter', data: fs.readFileSync(fontsDir + '/Inter-Bold.ttf'), weight: 700, style: 'normal' },
+    { name: 'Inter', data: fs.readFileSync(fontsDir + '/Inter-Black.ttf'), weight: 900, style: 'normal' },
+  ];
+
+  // Individual post files + PNG cards
+  let cardCount = 0;
+  for (const post of result.posts) {
     const slug = String(post.id).padStart(2, '0') + '-' + post.type + '-' + slugify(post.topic);
     const content = [
       post.body,
@@ -277,17 +312,161 @@ function writeOutputs(result) {
       `Topic: ${post.topic}`,
       `Schedule: ${post.schedule.day}, ${post.schedule.date} at ${post.schedule.time} (Week ${post.schedule.week})`,
       `CTA: ${post.cta}`,
+      `Visual: cards/${slug}.png`,
       `First comment: Add report link as first comment after posting`,
       `Character count: ${post.body.length}`,
     ].join('\n');
     fs.writeFileSync(postsDir + '/' + slug + '.txt', content);
-  });
+
+    // Render PNG card
+    const element = buildCardElement(post);
+    if (element) {
+      const svg = await satori(element, { width: 1080, height: 1080, fonts });
+      const resvg = new Resvg(svg, { fitTo: { mode: 'width', value: 1080 } });
+      const png = resvg.render().asPng();
+      fs.writeFileSync(cardsDir + '/' + slug + '.png', png);
+      cardCount++;
+    }
+  }
   console.log('Written: ' + result.posts.length + ' post files to ' + postsDir + '/');
+  console.log('Written: ' + cardCount + ' PNG cards to ' + cardsDir + '/');
 
   // Campaign calendar
   const calendar = buildCalendar(result);
   fs.writeFileSync(dir + '/campaign-calendar.md', calendar);
   console.log('Written: ' + dir + '/campaign-calendar.md');
+}
+
+// --- PNG card builder (Satori element trees, 1080x1350) ---
+// Design: one hero element per card, massive typography, #f5f5f5 bg
+function el(type, style, children) {
+  if (typeof children === 'string') children = children;
+  if (!Array.isArray(children) && typeof children !== 'string') children = children ? [children] : [];
+  return { type, props: { style: { fontFamily: 'Inter', ...style }, children } };
+}
+
+function buildCardElement(post) {
+  const v = post.visual;
+  if (!v || !v.type) return null;
+
+  // --- Build the hero content based on visual type ---
+  let hero = null;
+
+  if (v.type === 'stat_card' && Array.isArray(v.data)) {
+    const primary = v.data.find(s => s.highlight) || v.data[0];
+    const rest = v.data.filter(s => s !== primary);
+    hero = el('div', { display: 'flex', flexDirection: 'column', alignItems: 'flex-start', width: '100%' }, [
+      el('div', { fontSize: 180, fontWeight: 900, color: '#ff4400', lineHeight: 1 }, String(primary.number)),
+      el('div', { fontSize: 32, color: '#374151', marginTop: 12 }, String(primary.label)),
+      ...(rest.length > 0 ? [
+        el('div', { display: 'flex', width: '100%', marginTop: 48, gap: 40 },
+          rest.map(s =>
+            el('div', { display: 'flex', flexDirection: 'column' }, [
+              el('div', { fontSize: 72, fontWeight: 900, color: '#111', lineHeight: 1 }, String(s.number)),
+              el('div', { fontSize: 22, color: '#6b7280', marginTop: 6 }, String(s.label)),
+            ])
+          )
+        )
+      ] : []),
+    ]);
+  }
+
+  else if (v.type === 'comparison' && v.data) {
+    const d = v.data;
+    hero = el('div', { display: 'flex', flexDirection: 'column', alignItems: 'flex-start', width: '100%' }, [
+      // "Before" — smaller, gray, clearly labeled
+      el('div', { display: 'flex', alignItems: 'baseline', gap: 20 }, [
+        el('div', { fontSize: 80, fontWeight: 900, color: '#c0c0c0', lineHeight: 1 }, String(d.left.number)),
+        el('div', { fontSize: 26, color: '#9ca3af' }, String(d.left.label)),
+      ]),
+      // Change badge
+      ...(d.change ? [
+        el('div', { display: 'flex', alignItems: 'center', gap: 16, marginTop: 24, marginBottom: 24 }, [
+          el('div', { fontSize: 32, fontWeight: 900, color: '#ff4400' }, '\u2193'),
+          el('div', { fontSize: 32, fontWeight: 900, background: '#ff4400', color: '#fff', padding: '6px 24px' }, String(d.change)),
+        ]),
+      ] : [
+        el('div', { marginTop: 24, marginBottom: 24 }, ''),
+      ]),
+      // "After" — big, black, the hero
+      el('div', { display: 'flex', alignItems: 'baseline', gap: 20 }, [
+        el('div', { fontSize: 160, fontWeight: 900, color: '#111', lineHeight: 1 }, String(d.right.number)),
+      ]),
+      el('div', { fontSize: 26, color: '#374151', marginTop: 6 }, String(d.right.label)),
+    ]);
+  }
+
+  else if (v.type === 'bar_chart' && Array.isArray(v.data)) {
+    const maxVal = Math.max(...v.data.map(d => d.value));
+    hero = el('div', { display: 'flex', flexDirection: 'column', width: '100%', gap: 24 },
+      v.data.map(d => {
+        const pct = Math.round((d.value / maxVal) * 100);
+        return el('div', { display: 'flex', flexDirection: 'column', width: '100%' }, [
+          el('div', { display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 10 }, [
+            el('div', { fontSize: 34, fontWeight: 700, color: '#111' }, String(d.label)),
+            el('div', { fontSize: 42, fontWeight: 900, color: '#ff4400' }, d.value + '%'),
+          ]),
+          el('div', { display: 'flex', width: '100%', background: '#e5e5e5', height: 56 }, [
+            el('div', { width: pct + '%', height: '100%', background: '#ff4400' }, ''),
+          ]),
+        ]);
+      })
+    );
+  }
+
+  else if (v.type === 'pipeline' && (Array.isArray(v.data) || v.data?.stages)) {
+    const colors = ['#ff4400', '#e03800', '#c23000', '#992900', '#111111'];
+    const stages = Array.isArray(v.data) ? v.data : v.data.stages;
+    const subtitle = !Array.isArray(v.data) && v.data.subtitle;
+    const stageEls = stages.map((label, i) => {
+        const items = [
+          el('div', { display: 'flex', alignItems: 'center', gap: 28, background: '#ebebeb', padding: '28px 32px', borderLeft: '6px solid ' + (colors[i] || '#333') }, [
+            el('div', { fontSize: 40, fontWeight: 900, color: colors[i] || '#333', width: 56, flexShrink: 0 }, String(i + 1) + '.'),
+            el('div', { fontSize: 36, fontWeight: 700, color: '#111' }, String(label)),
+          ]),
+        ];
+        if (i < v.data.length - 1) {
+          items.push(el('div', { height: 8 }, ''));
+        }
+        return el('div', { display: 'flex', flexDirection: 'column' }, items);
+      });
+    const pipeChildren = [];
+    if (subtitle) {
+      pipeChildren.push(el('div', { fontSize: 24, color: '#6b7280', marginBottom: 24 }, String(subtitle)));
+    }
+    pipeChildren.push(...stageEls);
+    hero = el('div', { display: 'flex', flexDirection: 'column', width: '100%' }, pipeChildren);
+  }
+
+  else if (v.type === 'quote_card' && v.data) {
+    hero = el('div', { display: 'flex', flexDirection: 'column', width: '100%', borderLeft: '6px solid #ff4400', paddingLeft: 40 }, [
+      el('div', { fontSize: 44, fontWeight: 700, color: '#111', lineHeight: 1.4 }, '\u201C' + String(v.data.quote) + '\u201D'),
+      el('div', { fontSize: 28, color: '#6b7280', marginTop: 28 }, '\u2014 ' + String(v.data.attribution)),
+    ]);
+  }
+
+  else { return null; }
+
+  // --- Card shell: 1080x1080 square, content packed tight ---
+  return el('div', {
+    display: 'flex', flexDirection: 'column',
+    width: '100%', height: '100%',
+    background: '#f5f5f5', padding: '48px 56px',
+    justifyContent: 'space-between',
+  }, [
+    // Header
+    el('div', { display: 'flex', justifyContent: 'space-between', alignItems: 'center' }, [
+      el('div', { fontSize: 18, fontWeight: 700, letterSpacing: 4, color: '#9ca3af' }, 'DARKWEBIQ'),
+      el('div', { fontSize: 16, fontWeight: 700, letterSpacing: 2, color: '#fff', background: '#ff4400', padding: '5px 14px' }, 'Q1 2026'),
+    ]),
+    // Headline + hero packed together
+    el('div', { display: 'flex', flexDirection: 'column', width: '100%' }, [
+      el('div', { fontSize: 44, fontWeight: 900, color: '#111', lineHeight: 1.15, marginBottom: 36 }, String(v.headline || post.topic)),
+      hero,
+    ]),
+    // Footer
+    el('div', { fontSize: 16, color: '#b0b0b0' }, 'darkwebiq.com'),
+  ]);
 }
 
 function buildCalendar(result) {
@@ -348,8 +527,35 @@ async function callClaude(userPrompt, maxTokens) {
 }
 
 function parseResponse(data) {
-  const raw = data.content[0].text.replace(/^```json?\s*/, '').replace(/\s*```\s*$/, '').trim();
-  return JSON.parse(raw);
+  let raw = data.content[0].text;
+  // Strip markdown fences
+  raw = raw.replace(/^```json?\s*\n?/, '').replace(/\n?\s*```\s*$/, '').trim();
+  // Find the top-level JSON object — skip any preamble text
+  const jsonStart = raw.indexOf('{"posts"');
+  if (jsonStart === -1) {
+    // fallback: find first {
+    const fallback = raw.indexOf('{');
+    if (fallback > 0) raw = raw.slice(fallback);
+  } else if (jsonStart > 0) {
+    raw = raw.slice(jsonStart);
+  }
+  // Strip trailing garbage after closing brace
+  const lastBrace = raw.lastIndexOf('}');
+  if (lastBrace > 0) {
+    raw = raw.slice(0, lastBrace + 1);
+  }
+  // Fix trailing commas
+  raw = raw.replace(/,\s*([\]}])/g, '$1');
+  // Fix unescaped newlines inside JSON strings
+  raw = raw.replace(/"([^"]*?)"/gs, (match) => {
+    return match.replace(/\n/g, '\\n').replace(/\r/g, '\\r').replace(/\t/g, '\\t');
+  });
+  try {
+    return JSON.parse(raw);
+  } catch (e) {
+    console.error('JSON parse failed. First 500 chars:', raw.slice(0, 500));
+    throw e;
+  }
 }
 
 // --- Main ---
@@ -420,7 +626,7 @@ async function run() {
   };
 
   // Write outputs
-  writeOutputs(result);
+  await writeOutputs(result);
 
   console.log('\nDone. ' + allPosts.length + ' posts ready in output/linkedin-posts/');
 }

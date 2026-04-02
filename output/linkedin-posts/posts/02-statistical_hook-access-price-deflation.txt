@@ -1,0 +1,15 @@
+$1,427 to $439. That's how far initial access prices have fallen from Q1 2023 to Q1 2026 — a 69% deflation driven by automation, AI tooling, and oversupply from infostealer logs.
+
+DWIQ operational data shows the average network access price collapsed as the market flooded with compromised credentials. But premium access — domain admin, Citrix environments, cloud consoles — still commands thousands to tens of thousands.
+
+The economics are clear: when access becomes commodity-priced, threat actors pivot to volume operations and alternative monetization strategies.
+
+#ThreatIntelligence #AccessBrokers #CyberSecurity #DarkWeb
+
+---
+Type: statistical_hook
+Topic: Access price deflation
+Schedule: Tuesday, 2026-04-08 at 8:00 AM ET (Week 1)
+CTA: Share insights on how access price trends affect your security posture
+Visual: cards/02-statistical_hook-access-price-deflation.png
+Character count: 628

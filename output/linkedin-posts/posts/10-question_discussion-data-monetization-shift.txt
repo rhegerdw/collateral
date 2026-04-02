@@ -1,0 +1,17 @@
+When 72% of ransomware victims refuse to pay, what happens to all that exfiltrated data?
+
+It doesn't just disappear. Threat actors are building sophisticated platforms to convert raw dumps into structured, sellable intelligence products. Automated filtering, database reverse engineering, categorized purchasing, manual validation.
+
+Leak Bazaar represents a fundamental shift: from data as extortion leverage to data as refinable asset. Organizations can no longer assume that refusing to pay eliminates the value of stolen information.
+
+How should this change your post-breach monitoring strategy?
+
+#ThreatIntelligence #DataBreach #Ransomware #CISO
+
+---
+Type: question_discussion
+Topic: Data monetization shift
+Schedule: Thursday, 2026-04-24 at 12:00 PM ET (Week 3)
+CTA: Share how your organization monitors for structured data resale beyond traditional leak sites
+Visual: cards/10-question_discussion-data-monetization-shift.png
+Character count: 649

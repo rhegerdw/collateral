@@ -1,0 +1,17 @@
+The numbers tell one story. The individual cases tell another. Jaguar Land Rover: $2.5 billion in estimated losses. Scattered Spider's Marks & Spencer breach: prolonged operational disruption and significant stock depreciation. Interlock's DaVita attack: 2.7 million patient records exposed.
+
+These weren't just statistics in the 28% of victims who refused to pay. They were organizations that gambled on containment and lost to secondary monetization.
+
+The Dark Angels group's $75 million payday proves the other side: when critical infrastructure or mission-essential operations are at stake, the calculus changes completely.
+
+Both outcomes — devastating losses from refusal and record payments for compliance — illustrate why the binary "pay or don't pay" framework no longer captures the real decision tree.
+
+#Ransomware #IncidentResponse #CISO #RiskManagement
+
+---
+Type: narrative_story
+Topic: High-impact breach examples
+Schedule: Tuesday, 2026-04-22 at 8:00 AM ET (Week 3)
+CTA: Evaluate how your incident response plans address both payment and non-payment scenarios
+Visual: cards/08-narrative_story-high-impact-breach-examples.png
+Character count: 864

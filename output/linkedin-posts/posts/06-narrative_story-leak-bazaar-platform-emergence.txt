@@ -1,0 +1,19 @@
+October 2025: DarkWebIQ operatives first learned about a new criminal marketplace from SnowTeam, an initial access broker with ties to Akira ransomware. The platform wasn't designed for traditional name-and-shame tactics.
+
+It was built to monetize exfiltrated data.
+
+March 2026: SnowTeam advertised Leak Bazaar publicly on Exploit forum. The post was deleted. SnowTeam was banned for advertising ransomware products. Similar removals occurred on ReHub.
+
+But infrastructure adapts. SnowTeam migrated to T1erOne forum, where Qilin, Medusa, and other major RaaS groups now advertise. A 10% referral program launched. Any ransomware group can now supply data.
+
+What started as an Akira-specific tool evolved into ecosystem infrastructure. The economics drove the evolution.
+
+#ThreatIntelligence #DarkWeb #Ransomware #CyberCrime
+
+---
+Type: narrative_story
+Topic: Leak Bazaar platform emergence
+Schedule: Wednesday, 2026-04-16 at 10:00 AM ET (Week 2)
+CTA: Track how criminal infrastructure evolves when traditional forums restrict access
+Visual: cards/06-narrative_story-leak-bazaar-platform-emergence.png
+Character count: 823

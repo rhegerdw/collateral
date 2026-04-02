@@ -1,25 +1,17 @@
-First Exploit banned SnowTeam for advertising ransomware products.
+When Exploit forum banned SnowTeam for advertising Leak Bazaar, something predictable happened. The infrastructure didn't disappear — it migrated. T1erOne became the new home.
 
-Then ReHub removed their listings for both Leak Bazaar and the brute-force tool.
+DWIQ operatives observed Qilin, Medusa, Hyflock, Gunra, and "The Gentlemen's RaaS" all advertising on T1erOne. The forum maintains a public blacklist of banned affiliates — two Nova affiliates and one Qilin affiliate at last count.
 
-SnowTeam was concerned about the pattern of removals.
+One detail stood out: a blacklisted Nova affiliate was identified as a researcher.
 
-So they did what threat actors always do: they adapted.
+This pattern repeats constantly in the ecosystem. Top-tier forums enforce restrictions, infrastructure relocates to emerging platforms. The migration doesn't reduce access offers — it redistributes them across different venues while maintaining operational continuity.
 
-Migration to T1erOne, a forum DarkWebIQ assesses resembles a rebooted RAMP. On March 25, 2026, SnowTeam successfully posted their Leak Bazaar advertisement.
-
-T1erOne now hosts Qilin, Medusa, Hyflock, Gunra, and "The Gentlemen's RaaS." The forum maintains a public blacklist — three affiliates banned, including two Nova affiliates and one researcher who got caught.
-
-When top-tier forums enforce restrictions, the infrastructure doesn't disappear. It relocates.
-
-The underground economy finds a way.
-
-#DarkWeb #ThreatIntelligence #CyberCrime #Ransomware #ThreatActors
+#ThreatIntelligence #CyberCrime #DarkWeb #SecurityOperations
 
 ---
 Type: narrative_story
 Topic: Forum migration pattern
 Schedule: Thursday, 2026-04-17 at 12:00 PM ET (Week 2)
-CTA: Forum volatility doesn't stop threat actors. What does this mean for tracking their operations?
-First comment: Add report link as first comment after posting
-Character count: 829
+CTA: Monitor how threat infrastructure adapts when primary communication channels face restrictions
+Visual: cards/07-narrative_story-forum-migration-pattern.png
+Character count: 824

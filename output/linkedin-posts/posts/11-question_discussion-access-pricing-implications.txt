@@ -1,0 +1,17 @@
+Network access prices fell 69% in three years. From $1,427 to $439. When criminal services become commodity-priced, what does that signal about the threat landscape?
+
+DWIQ data shows this deflation stems from automation, AI-assisted tooling, and oversupply from infostealer logs. The market is flooded with compromised credentials.
+
+But here's the strategic question: when access becomes cheap and abundant, do threat actors pivot to volume operations, premium targets, or alternative monetization strategies?
+
+The answer shapes every defense decision you make.
+
+#ThreatIntelligence #AccessBrokers #CyberSecurity #RiskManagement
+
+---
+Type: question_discussion
+Topic: Access pricing implications
+Schedule: Tuesday, 2026-04-29 at 8:00 AM ET (Week 4)
+CTA: Discuss how commodity access pricing changes your threat modeling assumptions
+Visual: cards/11-question_discussion-access-pricing-implications.png
+Character count: 628
